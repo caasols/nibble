@@ -37,7 +37,7 @@ struct ContentView: View {
 
 struct ConnectionStatusView: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
-    @AppStorage("showPublicIP") private var showPublicIP = true
+    @EnvironmentObject var settings: AppSettings
     
     var body: some View {
         VStack(spacing: 8) {
@@ -51,7 +51,7 @@ struct ConnectionStatusView: View {
             }
             .padding(.horizontal, 16)
             
-            if showPublicIP {
+            if settings.showPublicIP {
                 HStack {
                     Text("Public IP Address:")
                         .font(.system(size: 13, weight: .medium))

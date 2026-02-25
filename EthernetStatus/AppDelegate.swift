@@ -7,11 +7,13 @@ import Combine
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     var statusBarItem: NSStatusItem!
     var popover: NSPopover!
+    let settings: AppSettings
     @Published var networkMonitor: NetworkMonitor
     private var cancellables = Set<AnyCancellable>()
     
     override init() {
-        self.networkMonitor = NetworkMonitor()
+        self.settings = AppSettings()
+        self.networkMonitor = NetworkMonitor(settings: settings)
         super.init()
     }
     
@@ -29,18 +31,23 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         popover = NSPopover()
         popover.contentSize = NSSize(width: 300, height: 400)
         popover.behavior = .transient
-        popover.contentViewController = NSHostingController(rootView: ContentView().environmentObject(self))
+        popover.contentViewController = NSHostingController(
+            rootView: ContentView()
+                .environmentObject(self)
+                .environmentObject(settings)
+        )
         
         // Setup network monitoring
         networkMonitor.startMonitoring()
 
         // Apply initial app visibility mode
-        applyActivationPolicy()
+        applyActivationPolicy(startHidden: settings.startHidden)
 
-        NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
+        settings.$startHidden
+            .removeDuplicates()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.applyActivationPolicy()
+            .sink { [weak self] startHidden in
+                self?.applyActivationPolicy(startHidden: startHidden)
             }
             .store(in: &cancellables)
          
@@ -78,8 +85,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             .store(in: &cancellables)
     }
 
-    private func applyActivationPolicy() {
-        let startHidden = UserDefaults.standard.object(forKey: "startHidden") as? Bool ?? false
+    private func applyActivationPolicy(startHidden: Bool) {
         let policy: NSApplication.ActivationPolicy = startHidden ? .accessory : .regular
         NSApplication.shared.setActivationPolicy(policy)
 

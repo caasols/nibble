@@ -23,9 +23,14 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     var cancellables = Set<AnyCancellable>()
     private let workerQueue = DispatchQueue(label: "com.ethernetstatus.monitor", qos: .utility)
     private var currentRefreshInterval: TimeInterval = 30
+    private let settings: AppSettings
     
     // Cache for hardware port mappings
     private var hardwarePortMap: [String: String] = [:]
+
+    init(settings: AppSettings) {
+        self.settings = settings
+    }
     
     func startMonitoring() {
         // Monitor network path changes
@@ -35,10 +40,24 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         }
         monitor?.start(queue: DispatchQueue.global(qos: .background))
 
-        NotificationCenter.default.publisher(for: UserDefaults.didChangeNotification)
+        settings.$refreshInterval
+            .removeDuplicates()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] _ in
-                self?.handleSettingsChange()
+            .sink { [weak self] refreshInterval in
+                self?.scheduleRefreshTimer(with: TimeInterval(refreshInterval))
+            }
+            .store(in: &cancellables)
+
+        settings.$showPublicIP
+            .removeDuplicates()
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] shouldShowPublicIP in
+                guard let self = self else { return }
+                if shouldShowPublicIP {
+                    self.fetchPublicIP()
+                } else {
+                    self.publicIP = nil
+                }
             }
             .store(in: &cancellables)
          
@@ -49,7 +68,7 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         refreshNetworkState()
          
         // Set up periodic refresh
-        scheduleRefreshTimer(with: configuredRefreshInterval())
+        scheduleRefreshTimer(with: TimeInterval(settings.refreshInterval))
     }
 
     private func scheduleRefreshTimer(with interval: TimeInterval) {
@@ -111,23 +130,8 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         }
     }
 
-    private func handleSettingsChange() {
-        let desiredInterval = configuredRefreshInterval()
-        if desiredInterval != currentRefreshInterval {
-            scheduleRefreshTimer(with: desiredInterval)
-        }
-
-        let shouldShowPublicIP = UserDefaults.standard.object(forKey: "showPublicIP") as? Bool ?? true
-        if shouldShowPublicIP {
-            fetchPublicIP()
-        } else {
-            publicIP = nil
-        }
-    }
-    
     private func fetchPublicIP() {
-        let shouldShowPublicIP = UserDefaults.standard.object(forKey: "showPublicIP") as? Bool ?? true
-        guard shouldShowPublicIP else {
+        guard settings.showPublicIP else {
             DispatchQueue.main.async { [weak self] in
                 self?.publicIP = nil
             }
@@ -239,11 +243,4 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         return "Unknown"
     }
 
-    private func configuredRefreshInterval() -> TimeInterval {
-        let configured = UserDefaults.standard.integer(forKey: "refreshInterval")
-        if configured >= 10 {
-            return TimeInterval(configured)
-        }
-        return 30
-    }
 }
