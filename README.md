@@ -16,7 +16,7 @@ Nibble sits quietly in your menubar, watching your ethernet so you don't have to
 
 ## Requirements
 
-- macOS 12.0 (Monterey) or later
+- macOS 13.0 (Ventura) or later
 - Xcode 14.0 or later (for building)
 
 ## Installation

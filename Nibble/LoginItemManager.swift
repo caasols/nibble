@@ -1,44 +1,58 @@
 import Foundation
 import ServiceManagement
 
-class LoginItemManager {
-    static func setOpenAtLogin(enabled: Bool) {
-        // For macOS 13+ (Ventura and later)
-        if #available(macOS 13.0, *) {
-            let service = SMAppService.mainApp
-            do {
-                if enabled {
-                    try service.register()
-                } else {
-                    try service.unregister()
-                }
-            } catch {
-                print("Failed to \(enabled ? "register" : "unregister") login item: \(error)")
-            }
+protocol LoginItemManaging {
+    func isEnabled() -> Bool
+    func setEnabled(_ enabled: Bool) throws
+}
+
+struct LoginItemManager: LoginItemManaging {
+    private let service: SMAppService
+
+    init(service: SMAppService = .mainApp) {
+        self.service = service
+    }
+
+    func isEnabled() -> Bool {
+        service.status == .enabled
+    }
+
+    func setEnabled(_ enabled: Bool) throws {
+        if enabled {
+            try service.register()
         } else {
-            // For older macOS versions, use the legacy API
-            // This requires a helper app in the main app bundle
-            setLegacyLoginItem(enabled: enabled)
+            try service.unregister()
         }
     }
-    
-    static func isOpenAtLoginEnabled() -> Bool {
-        if #available(macOS 13.0, *) {
-            let service = SMAppService.mainApp
-            return service.status == .enabled
-        } else {
-            return isLegacyLoginItemEnabled()
+}
+
+@MainActor
+final class LoginItemController: ObservableObject {
+    @Published private(set) var isOpenAtLogin: Bool
+    @Published private(set) var lastErrorMessage: String?
+
+    private let manager: LoginItemManaging
+
+    init(manager: LoginItemManaging = LoginItemManager()) {
+        self.manager = manager
+        self.isOpenAtLogin = manager.isEnabled()
+        self.lastErrorMessage = nil
+    }
+
+    func refreshFromSystem() {
+        isOpenAtLogin = manager.isEnabled()
+    }
+
+    func setOpenAtLogin(_ enabled: Bool) {
+        let previous = isOpenAtLogin
+        lastErrorMessage = nil
+
+        do {
+            try manager.setEnabled(enabled)
+            isOpenAtLogin = manager.isEnabled()
+        } catch {
+            isOpenAtLogin = previous
+            lastErrorMessage = "Could not update Open at Login. Please try again in System Settings."
         }
-    }
-    
-    private static func setLegacyLoginItem(enabled: Bool) {
-        // Legacy implementation using SMLoginItemSetEnabled
-        // This is a simplified version - in production you'd want to properly implement this
-        print("Legacy login item setting: \(enabled)")
-    }
-    
-    private static func isLegacyLoginItemEnabled() -> Bool {
-        // Check if the app is in login items
-        return false
     }
 }

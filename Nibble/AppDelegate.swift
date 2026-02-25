@@ -8,11 +8,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     var statusBarItem: NSStatusItem!
     var popover: NSPopover!
     let settings: AppSettings
+    let loginItemController: LoginItemController
     @Published var networkMonitor: NetworkMonitor
     private var cancellables = Set<AnyCancellable>()
     
     override init() {
         self.settings = AppSettings()
+        self.loginItemController = LoginItemController()
         self.networkMonitor = NetworkMonitor(settings: settings)
         super.init()
     }

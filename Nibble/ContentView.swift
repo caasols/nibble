@@ -131,18 +131,32 @@ struct InterfaceRow: View {
 
 struct MenuItemsView: View {
     @Binding var showingAbout: Bool
-    @AppStorage("openAtLogin") private var openAtLogin = false
     @EnvironmentObject var appDelegate: AppDelegate
+
+    private var openAtLoginBinding: Binding<Bool> {
+        Binding(
+            get: { appDelegate.loginItemController.isOpenAtLogin },
+            set: { appDelegate.loginItemController.setOpenAtLogin($0) }
+        )
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Toggle("Open at Login", isOn: $openAtLogin)
+            Toggle("Open at Login", isOn: openAtLoginBinding)
                 .font(.system(size: 13))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
-                .onChange(of: openAtLogin) { newValue in
-                    LoginItemManager.setOpenAtLogin(enabled: newValue)
+                .onAppear {
+                    appDelegate.loginItemController.refreshFromSystem()
                 }
+
+            if let message = appDelegate.loginItemController.lastErrorMessage {
+                Text(message)
+                    .font(.system(size: 11))
+                    .foregroundColor(.red)
+                    .padding(.horizontal, 12)
+                    .padding(.bottom, 6)
+            }
             
             Button(action: {
                 let didOpenSettings = NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
