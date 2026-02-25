@@ -7,7 +7,8 @@ struct NibbleApp: App {
     
     var body: some Scene {
         Settings {
-            EmptyView()
+            PreferencesView()
+                .environmentObject(appDelegate.settings)
         }
     }
 }

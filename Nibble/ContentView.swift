@@ -3,7 +3,6 @@ import SwiftUI
 struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
     @State private var showingAbout = false
-    @State private var showingPreferences = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -21,16 +20,13 @@ struct ContentView: View {
                 .padding(.vertical, 8)
             
             // Menu Items
-            MenuItemsView(showingAbout: $showingAbout, showingPreferences: $showingPreferences)
+            MenuItemsView(showingAbout: $showingAbout)
                 .padding(.bottom, 8)
         }
         .frame(width: 280)
         .environmentObject(appDelegate.networkMonitor)
         .sheet(isPresented: $showingAbout) {
             AboutView()
-        }
-        .sheet(isPresented: $showingPreferences) {
-            PreferencesView()
         }
     }
 }
@@ -135,7 +131,6 @@ struct InterfaceRow: View {
 
 struct MenuItemsView: View {
     @Binding var showingAbout: Bool
-    @Binding var showingPreferences: Bool
     @AppStorage("openAtLogin") private var openAtLogin = false
     @EnvironmentObject var appDelegate: AppDelegate
     
@@ -150,7 +145,10 @@ struct MenuItemsView: View {
                 }
             
             Button(action: {
-                showingPreferences = true
+                let didOpenSettings = NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
+                if !didOpenSettings {
+                    _ = NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
+                }
             }) {
                 HStack {
                     Text("Preferences...")

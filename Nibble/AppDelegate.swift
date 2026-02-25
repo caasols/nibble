@@ -45,13 +45,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         networkMonitor.startMonitoring()
 
         // Apply initial app visibility mode
-        applyActivationPolicy(startHidden: settings.startHidden)
+        applyActivationPolicy(appMode: settings.appMode)
 
-        settings.$startHidden
+        settings.$appMode
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
-            .sink { [weak self] startHidden in
-                self?.applyActivationPolicy(startHidden: startHidden)
+            .sink { [weak self] appMode in
+                self?.applyActivationPolicy(appMode: appMode)
             }
             .store(in: &cancellables)
          
@@ -89,11 +89,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             .store(in: &cancellables)
     }
 
-    private func applyActivationPolicy(startHidden: Bool) {
-        let policy: NSApplication.ActivationPolicy = startHidden ? .accessory : .regular
+    private func applyActivationPolicy(appMode: AppSettings.AppMode) {
+        let policy: NSApplication.ActivationPolicy = appMode == .menuBarOnly ? .accessory : .regular
         NSApplication.shared.setActivationPolicy(policy)
 
-        if !startHidden {
+        if appMode == .menuBarAndDock {
             NSApplication.shared.activate(ignoringOtherApps: false)
         }
     }

@@ -2,6 +2,11 @@ import Foundation
 import Combine
 
 final class AppSettings: ObservableObject {
+    enum AppMode: String {
+        case menuBarOnly
+        case menuBarAndDock
+    }
+
     @Published var refreshInterval: Int {
         didSet {
             let normalized = Self.normalizedRefreshInterval(refreshInterval)
@@ -19,9 +24,9 @@ final class AppSettings: ObservableObject {
         }
     }
 
-    @Published var startHidden: Bool {
+    @Published var appMode: AppMode {
         didSet {
-            userDefaults.set(startHidden, forKey: Keys.startHidden)
+            userDefaults.set(appMode.rawValue, forKey: Keys.appMode)
         }
     }
 
@@ -33,12 +38,13 @@ final class AppSettings: ObservableObject {
             Self.integer(forKey: Keys.refreshInterval, defaultValue: 30, in: userDefaults)
         )
         self.showPublicIP = Self.bool(forKey: Keys.showPublicIP, defaultValue: true, in: userDefaults)
-        self.startHidden = Self.bool(forKey: Keys.startHidden, defaultValue: false, in: userDefaults)
+        self.appMode = Self.appMode(in: userDefaults)
     }
 
     private enum Keys {
         static let refreshInterval = "refreshInterval"
         static let showPublicIP = "showPublicIP"
+        static let appMode = "appMode"
         static let startHidden = "startHidden"
     }
 
@@ -54,6 +60,16 @@ final class AppSettings: ObservableObject {
             return defaultValue
         }
         return defaults.bool(forKey: key)
+    }
+
+    private static func appMode(in defaults: UserDefaults) -> AppMode {
+        if let storedMode = defaults.string(forKey: Keys.appMode),
+           let appMode = AppMode(rawValue: storedMode) {
+            return appMode
+        }
+
+        let legacyStartHidden = Self.bool(forKey: Keys.startHidden, defaultValue: false, in: defaults)
+        return legacyStartHidden ? .menuBarOnly : .menuBarAndDock
     }
 
     private static func normalizedRefreshInterval(_ value: Int) -> Int {

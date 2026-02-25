@@ -4,8 +4,8 @@ This roadmap merges the original refactor priorities with feature-parity insight
 
 ## Current Status
 
-- Completed: **1**, **2**, **3**, **4**, **5**
-- Missing / next in queue: **6** through **14**
+- Completed: **1**, **2**, **3**, **4**, **5**, **6**
+- Missing / next in queue: **7** through **14**
 
 ## Priority Order
 
@@ -30,7 +30,7 @@ This roadmap merges the original refactor priorities with feature-parity insight
    - Split responsibilities into interface provider, connection evaluator, public IP provider, and orchestrator.
    - Improve testability and reduce state coupling.
 
-6. **Harden settings and app mode consistency**
+6. **Harden settings and app mode consistency** *(done)*
    - Wire the macOS `Settings` scene to real preferences.
    - Keep sheet-based preferences only if intentionally duplicated.
    - Decide and document menubar-only behavior vs Dock visibility mode.

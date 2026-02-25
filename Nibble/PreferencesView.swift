@@ -20,8 +20,24 @@ struct PreferencesView: View {
             
             VStack(alignment: .leading, spacing: 16) {
                 Toggle("Show Public IP Address", isOn: $settings.showPublicIP)
-                
-                Toggle("Start Hidden (No Dock Icon)", isOn: $settings.startHidden)
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("App Mode")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Picker("App Mode", selection: $settings.appMode) {
+                        Text("Menubar + Dock").tag(AppSettings.AppMode.menuBarAndDock)
+                        Text("Menubar Only").tag(AppSettings.AppMode.menuBarOnly)
+                    }
+                    .pickerStyle(.segmented)
+
+                    Text(settings.appMode == .menuBarOnly
+                         ? "Nibble runs as a menubar app and stays hidden from the Dock."
+                         : "Nibble appears in the Dock and can be activated like a standard app.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+                }
                 
                 VStack(alignment: .leading, spacing: 8) {
                     Text("Refresh Interval: \(settings.refreshInterval) seconds")

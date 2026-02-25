@@ -11,7 +11,7 @@ struct AppSettingsTests {
 
         #expect(settings.refreshInterval == 30)
         #expect(settings.showPublicIP)
-        #expect(!settings.startHidden)
+        #expect(settings.appMode == .menuBarAndDock)
     }
 
     @Test func refreshIntervalIsNormalizedToAllowedRangeAndStep() {
@@ -37,11 +37,22 @@ struct AppSettingsTests {
         var settings = AppSettings(userDefaults: defaults)
         settings.refreshInterval = 120
         settings.showPublicIP = false
-        settings.startHidden = true
+        settings.appMode = .menuBarOnly
 
         settings = AppSettings(userDefaults: defaults)
         #expect(settings.refreshInterval == 120)
         #expect(!settings.showPublicIP)
-        #expect(settings.startHidden)
+        #expect(settings.appMode == .menuBarOnly)
+    }
+
+    @Test func appModeFallsBackToLegacyStartHiddenPreference() {
+        let suite = "AppSettingsTests.legacyStartHidden"
+        let defaults = UserDefaults(suiteName: suite)!
+        defaults.removePersistentDomain(forName: suite)
+        defaults.set(true, forKey: "startHidden")
+
+        let settings = AppSettings(userDefaults: defaults)
+
+        #expect(settings.appMode == .menuBarOnly)
     }
 }
