@@ -2,17 +2,22 @@
 
 This roadmap merges the original refactor priorities with feature-parity insights from Ethernet Status analysis.
 
+## Current Status
+
+- Completed: **1**, **2**, **3**
+- Missing / next in queue: **4** through **14**
+
 ## Priority Order
 
-1. **Implement true 3-state network model (Active / Inactive / Disconnected)**
+1. **Implement true 3-state network model (Active / Inactive / Disconnected)** *(done)*
    - Determine whether ethernet is physically up and whether default route traffic uses it.
    - Replace single boolean status with a typed state model.
 
-2. **Replace heuristic classification with authoritative interface metadata**
+2. **Replace heuristic classification with authoritative interface metadata** *(done)*
    - Prefer authoritative system metadata for medium/type classification.
    - Keep heuristics only as fallback and expose classification confidence.
 
-3. **Fix and formalize snapshot pipeline**
+3. **Fix and formalize snapshot pipeline** *(done)*
    - Build one `InterfaceSnapshot` per refresh cycle.
    - Derive `interfaces` and global status from the same snapshot.
    - Merge MAC/IP/type data consistently and deterministically.

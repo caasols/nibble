@@ -142,22 +142,16 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
 
             self.buildHardwarePortMap()
             self.authoritativeMetadata = InterfaceMetadataResolver.authoritativeMetadataByBSDName()
-            let currentInterfaces = self.getNetworkInterfaces()
-            let visibleInterfaces = currentInterfaces.filter { interface in
-                !interface.name.starts(with: "lo") &&
-                !interface.name.starts(with: "awdl") &&
-                !interface.name.starts(with: "llw") &&
-                !interface.name.starts(with: "utun")
-            }
-            let state = ConnectionStateEvaluator.evaluate(
-                interfaces: currentInterfaces,
+            let observations = self.getInterfaceObservations()
+            let snapshot = InterfaceSnapshotBuilder.build(
+                observations: observations,
                 pathUsesWiredEthernet: self.latestPathUsesWiredEthernet
             )
 
             DispatchQueue.main.async {
-                self.interfaces = visibleInterfaces
-                self.connectionState = state
-                self.isEthernetConnected = state.isConnected
+                self.interfaces = snapshot.visibleInterfaces
+                self.connectionState = snapshot.connectionState
+                self.isEthernetConnected = snapshot.isEthernetConnected
             }
         }
     }
@@ -184,13 +178,13 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         }.resume()
     }
     
-    private func getNetworkInterfaces() -> [NetworkInterface] {
-        var interfaces: [NetworkInterface] = []
+    private func getInterfaceObservations() -> [InterfaceObservation] {
+        var observations: [InterfaceObservation] = []
         
         // Get all interfaces
         var ifaddr: UnsafeMutablePointer<ifaddrs>?
         guard getifaddrs(&ifaddr) == 0, let firstAddr = ifaddr else {
-            return interfaces
+            return observations
         }
         
         defer { freeifaddrs(ifaddr) }
@@ -239,32 +233,22 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
                 displayName: nil,
                 fallbackTypeName: hardwarePortMap[name] ?? getFallbackInterfaceType(name: name)
             )
-            let type = displayTypeName(for: classification.medium)
-            
-            // Check if interface already exists
-            if let existingIndex = interfaces.firstIndex(where: { $0.name == name }) {
-                var existing = interfaces[existingIndex]
-                existing.addresses.append(contentsOf: addresses)
-                existing.addresses = Array(Set(existing.addresses)).sorted()
-                interfaces[existingIndex] = existing
-            } else {
-                let networkInterface = NetworkInterface(
+            observations.append(
+                InterfaceObservation(
                     name: name,
                     displayName: classification.displayName,
                     hardwareAddress: hardwareAddress,
                     isActive: isActive,
                     addresses: addresses,
-                    type: type,
                     medium: classification.medium,
                     classificationConfidence: classification.confidence
                 )
-                interfaces.append(networkInterface)
-            }
+            )
 
             pointer = interface.ifa_next
         }
         
-        return interfaces.sorted { $0.name < $1.name }
+        return observations
     }
     
     private func getFallbackInterfaceType(name: String) -> String {
@@ -282,26 +266,4 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         }
         return "Unknown"
     }
-
-    private func displayTypeName(for medium: InterfaceMedium) -> String {
-        switch medium {
-        case .wired:
-            return "Ethernet"
-        case .wiFi:
-            return "Wi-Fi"
-        case .vpn:
-            return "VPN"
-        case .bridge:
-            return "Bridge"
-        case .loopback:
-            return "Loopback"
-        case .awdl:
-            return "AWDL"
-        case .bluetooth:
-            return "Bluetooth"
-        case .unknown:
-            return "Unknown"
-        }
-    }
-
 }
