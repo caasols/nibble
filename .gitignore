@@ -5,6 +5,7 @@
 xcuserdata/
 DerivedData/
 /.swiftpm
+.worktrees/
 *.ipa
 *.app
 build/
