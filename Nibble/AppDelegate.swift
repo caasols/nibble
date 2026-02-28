@@ -91,12 +91,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         ) {
             image.isTemplate = true
             button.image = image
-            button.title = "N"
-            button.imagePosition = .imageLeading
+            button.title = ""
+            button.imagePosition = .imageOnly
         } else {
             button.image = nil
-            button.title = "N"
-            button.imagePosition = .imageOnly
+            button.title = "Nibble"
+            button.imagePosition = .noImage
             button.toolTip = descriptor.accessibilityDescription
         }
     }
