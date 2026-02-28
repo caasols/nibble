@@ -9,9 +9,9 @@ enum InterfaceRouteRole: Equatable {
     var displayName: String {
         switch self {
         case .none:
-            return "None"
+            return LocalizationCatalog.localized("route_role.none")
         case .defaultRoute:
-            return "Default Route"
+            return LocalizationCatalog.localized("route_role.default")
         }
     }
 }

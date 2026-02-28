@@ -12,6 +12,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     let loginItemController: LoginItemController
     let updateCoordinator: UpdateCoordinator
     @Published var networkMonitor: NetworkMonitor
+    private let dnsFlushService: DNSFlushService
+    private let wiFiRefreshService: WiFiRefreshService
     private var cancellables = Set<AnyCancellable>()
     
     override init() {
@@ -19,6 +21,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         self.loginItemController = LoginItemController()
         self.updateCoordinator = UpdateCoordinator()
         self.networkMonitor = NetworkMonitor(settings: settings)
+        self.dnsFlushService = DNSFlushService()
+        self.wiFiRefreshService = WiFiRefreshService()
         super.init()
     }
     
@@ -157,19 +161,57 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
                 includeSensitiveIdentifiers: includeSensitive
             )
             try data.write(to: url, options: .atomic)
-            showDiagnosticsExportResultAlert(message: "Diagnostics exported to \(url.lastPathComponent).")
+            showDiagnosticsExportResultAlert(message: String(format: LocalizationCatalog.localized("diagnostics.export.success"), url.lastPathComponent))
         } catch {
-            showDiagnosticsExportResultAlert(message: "Diagnostics export failed: \(error.localizedDescription)")
+            showDiagnosticsExportResultAlert(message: String(format: LocalizationCatalog.localized("diagnostics.export.failure"), error.localizedDescription))
+        }
+    }
+
+    func flushDNSCache() {
+        let result = dnsFlushService.flushDNSCache()
+        showUtilityResultAlert(
+            title: LocalizationCatalog.localized("utility.dns.flush.title"),
+            message: result.message
+        )
+    }
+
+    func refreshWiFiWithConfirmation() {
+        let confirmationAlert = NSAlert()
+        confirmationAlert.messageText = LocalizationCatalog.localized("utility.wifi.refresh.confirm.title")
+        confirmationAlert.informativeText = LocalizationCatalog.localized("utility.wifi.refresh.confirm.message")
+        confirmationAlert.addButton(withTitle: LocalizationCatalog.localized("utility.wifi.refresh.confirm.action"))
+        confirmationAlert.addButton(withTitle: LocalizationCatalog.localized("common.cancel"))
+
+        guard confirmationAlert.runModal() == .alertFirstButtonReturn else {
+            return
+        }
+
+        switch wiFiRefreshService.refreshWiFi() {
+        case .success:
+            showUtilityResultAlert(
+                title: LocalizationCatalog.localized("utility.wifi.refresh.title"),
+                message: LocalizationCatalog.localized("utility.wifi.refresh.success")
+            )
+        case .cooldown(let remainingSeconds):
+            showUtilityResultAlert(
+                title: LocalizationCatalog.localized("utility.wifi.refresh.title"),
+                message: String(format: LocalizationCatalog.localized("utility.wifi.refresh.cooldown"), remainingSeconds)
+            )
+        case .failure:
+            showUtilityResultAlert(
+                title: LocalizationCatalog.localized("utility.wifi.refresh.title"),
+                message: LocalizationCatalog.localized("utility.wifi.refresh.failure")
+            )
         }
     }
 
     private func diagnosticsExportSensitivitySelection() -> Bool? {
         let alert = NSAlert()
-        alert.messageText = "Export Diagnostics"
-        alert.informativeText = "By default, diagnostics exclude public IP, local IP addresses, and hardware identifiers. Include sensitive identifiers only when explicitly needed for troubleshooting."
-        alert.addButton(withTitle: "Export Sanitized")
-        alert.addButton(withTitle: "Include Sensitive")
-        alert.addButton(withTitle: "Cancel")
+        alert.messageText = LocalizationCatalog.localized("diagnostics.export.title")
+        alert.informativeText = LocalizationCatalog.localized("diagnostics.export.prompt")
+        alert.addButton(withTitle: LocalizationCatalog.localized("diagnostics.export.sanitized"))
+        alert.addButton(withTitle: LocalizationCatalog.localized("diagnostics.export.include_sensitive"))
+        alert.addButton(withTitle: LocalizationCatalog.localized("common.cancel"))
 
         let response = alert.runModal()
         if response == .alertFirstButtonReturn {
@@ -185,9 +227,17 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
     private func showDiagnosticsExportResultAlert(message: String) {
         let alert = NSAlert()
-        alert.messageText = "Diagnostics Export"
+        alert.messageText = LocalizationCatalog.localized("diagnostics.export.title")
         alert.informativeText = message
-        alert.addButton(withTitle: "OK")
+        alert.addButton(withTitle: LocalizationCatalog.localized("common.ok"))
+        alert.runModal()
+    }
+
+    private func showUtilityResultAlert(title: String, message: String) {
+        let alert = NSAlert()
+        alert.messageText = title
+        alert.informativeText = message
+        alert.addButton(withTitle: LocalizationCatalog.localized("common.ok"))
         alert.runModal()
     }
 

@@ -13,7 +13,7 @@ protocol AppUpdateChecking: Sendable {
 @MainActor
 final class UpdateCoordinator: ObservableObject {
     @Published var updatePromptRelease: AppRelease?
-    @Published private(set) var statusMessage: String = "Update checks are enabled."
+    @Published private(set) var statusMessage: String = LocalizationCatalog.localized("updates.status.enabled")
 
     private let checker: AppUpdateChecking
     private let currentVersion: String
@@ -42,7 +42,7 @@ final class UpdateCoordinator: ObservableObject {
 
     func checkForUpdatesPeriodicallyIfNeeded() async {
         guard shouldCheckPeriodically else {
-            statusMessage = "Last checked recently."
+            statusMessage = LocalizationCatalog.localized("updates.status.checked_recently")
             return
         }
 
@@ -63,7 +63,7 @@ final class UpdateCoordinator: ObservableObject {
 
     private func performCheck() async {
         guard !isChecking else {
-            statusMessage = "Update check already in progress."
+            statusMessage = LocalizationCatalog.localized("updates.status.in_progress")
             return
         }
 
@@ -77,15 +77,15 @@ final class UpdateCoordinator: ObservableObject {
             let release = try await checker.latestRelease()
 
             guard Self.isVersion(release.version, newerThan: currentVersion) else {
-                statusMessage = "You're up to date."
+                statusMessage = LocalizationCatalog.localized("updates.status.up_to_date")
                 updatePromptRelease = nil
                 return
             }
 
             updatePromptRelease = release
-            statusMessage = "Version \(release.version) is available."
+            statusMessage = String(format: LocalizationCatalog.localized("updates.status.available"), release.version)
         } catch {
-            statusMessage = "Unable to check for updates right now."
+            statusMessage = LocalizationCatalog.localized("updates.status.unavailable")
         }
     }
 

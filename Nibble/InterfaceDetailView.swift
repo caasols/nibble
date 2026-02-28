@@ -8,10 +8,10 @@ struct InterfaceDetailView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
-                Text("Interface Details")
+                Text(LocalizationCatalog.localized("interface.details.title"))
                     .font(.headline)
                 Spacer()
-                Button("Done") {
+                Button(LocalizationCatalog.localized("common.done")) {
                     dismiss()
                 }
             }
@@ -21,16 +21,16 @@ struct InterfaceDetailView: View {
             
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
-                    DetailRow(label: "Name", value: interface.name)
-                    DetailRow(label: "Display Name", value: interface.displayName)
-                    DetailRow(label: "Adapter", value: interface.adapterDescription ?? "Unknown")
-                    DetailRow(label: "Route Role", value: interface.routeRole.displayName)
-                    DetailRow(label: "Interface Media", value: interface.type)
-                    CopyableDetailRow(label: "MAC Address", value: interface.hardwareAddress ?? "Unavailable")
-                    DetailRow(label: "Status", value: interface.isActive ? "Active" : "Inactive")
+                    DetailRow(label: LocalizationCatalog.localized("interface.details.name"), value: interface.name)
+                    DetailRow(label: LocalizationCatalog.localized("interface.details.display_name"), value: interface.displayName)
+                    DetailRow(label: LocalizationCatalog.localized("interface.details.adapter"), value: interface.adapterDescription ?? LocalizationCatalog.localized("common.unknown"))
+                    DetailRow(label: LocalizationCatalog.localized("interface.details.route_role"), value: interface.routeRole.displayName)
+                    DetailRow(label: LocalizationCatalog.localized("interface.details.media"), value: interface.type)
+                    CopyableDetailRow(label: LocalizationCatalog.localized("interface.details.mac"), value: interface.hardwareAddress ?? LocalizationCatalog.localized("common.unavailable"))
+                    DetailRow(label: LocalizationCatalog.localized("interface.details.status"), value: interface.isActive ? LocalizationCatalog.localized("status.active") : LocalizationCatalog.localized("status.inactive"))
                     
                     if !interface.addresses.isEmpty {
-                        Text("IP Addresses")
+                        Text(LocalizationCatalog.localized("interface.details.ip_addresses"))
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
@@ -39,7 +39,7 @@ struct InterfaceDetailView: View {
                             CopyableValueRow(value: address)
                         }
                     } else {
-                        DetailRow(label: "IP Addresses", value: "Unavailable")
+                        DetailRow(label: LocalizationCatalog.localized("interface.details.ip_addresses"), value: LocalizationCatalog.localized("common.unavailable"))
                     }
                 }
                 .padding()
@@ -79,11 +79,11 @@ struct CopyableDetailRow: View {
                     .font(.body)
                     .lineLimit(1)
                 Spacer()
-                Button("Copy") {
+                Button(LocalizationCatalog.localized("common.copy")) {
                     copyToClipboard(value)
                 }
                 .buttonStyle(.borderless)
-                .help("Copy value")
+                .help(LocalizationCatalog.localized("common.copy_value"))
             }
         }
     }
@@ -99,16 +99,16 @@ struct CopyableValueRow: View {
                 .foregroundColor(.secondary)
                 .textSelection(.enabled)
                 .contextMenu {
-                    Button("Copy") {
+                    Button(LocalizationCatalog.localized("common.copy")) {
                         copyToClipboard(value)
                     }
                 }
             Spacer()
-            Button("Copy") {
+            Button(LocalizationCatalog.localized("common.copy")) {
                 copyToClipboard(value)
             }
             .buttonStyle(.borderless)
-            .help("Copy address")
+            .help(LocalizationCatalog.localized("common.copy_address"))
         }
     }
 }
