@@ -5,6 +5,7 @@ struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
     @EnvironmentObject var updateCoordinator: UpdateCoordinator
     @State private var showingAbout = false
+    @State private var showingFeedbackForm = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -22,13 +23,16 @@ struct ContentView: View {
                 .padding(.vertical, 8)
             
             // Menu Items
-            MenuItemsView(showingAbout: $showingAbout)
+            MenuItemsView(showingAbout: $showingAbout, showingFeedbackForm: $showingFeedbackForm)
                 .padding(.bottom, 8)
         }
         .frame(width: 280)
         .environmentObject(appDelegate.networkMonitor)
         .sheet(isPresented: $showingAbout) {
             AboutView()
+        }
+        .sheet(isPresented: $showingFeedbackForm) {
+            FeedbackFormView(composer: appDelegate.makeFeedbackComposer())
         }
         .alert(
             "Update Available",
@@ -177,6 +181,7 @@ private func copyToClipboard(_ value: String) {
 
 struct MenuItemsView: View {
     @Binding var showingAbout: Bool
+    @Binding var showingFeedbackForm: Bool
     @EnvironmentObject var appDelegate: AppDelegate
 
     private var openAtLoginBinding: Binding<Bool> {
@@ -240,6 +245,20 @@ struct MenuItemsView: View {
             }) {
                 HStack {
                     Text("Export Diagnostics...")
+                        .font(.system(size: 13))
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Button(action: {
+                showingFeedbackForm = true
+            }) {
+                HStack {
+                    Text("Send Feedback...")
                         .font(.system(size: 13))
                     Spacer()
                 }

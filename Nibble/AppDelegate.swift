@@ -163,6 +163,20 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         }
     }
 
+    func makeFeedbackComposer() -> FeedbackComposer {
+        FeedbackComposer(
+            diagnosticsProvider: { [self] in
+                FeedbackDiagnosticsContext(
+                    appVersion: Self.appVersionString(),
+                    macOSVersion: ProcessInfo.processInfo.operatingSystemVersionString,
+                    connectionState: networkMonitor.connectionState,
+                    interfaces: networkMonitor.interfaces,
+                    publicIP: networkMonitor.publicIP
+                )
+            }
+        )
+    }
+
     private func diagnosticsExportSensitivitySelection() -> Bool? {
         let alert = NSAlert()
         alert.messageText = "Export Diagnostics"
