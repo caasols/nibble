@@ -48,16 +48,23 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     private let settings: AppSettings
     private let orchestrator: NetworkMonitorOrchestrator
     private var latestPathUsesWiredEthernet = false
+    private var lastPathRefreshAt: Date?
+    private let minimumPathRefreshInterval: TimeInterval
+    private let nowProvider: () -> Date
 
     init(
         settings: AppSettings,
         orchestrator: NetworkMonitorOrchestrator = NetworkMonitorOrchestrator(
             interfaceProvider: DefaultInterfaceSnapshotProvider(),
             publicIPProvider: DefaultPublicIPProvider()
-        )
+        ),
+        minimumPathRefreshInterval: TimeInterval = 0.5,
+        nowProvider: @escaping () -> Date = Date.init
     ) {
         self.settings = settings
         self.orchestrator = orchestrator
+        self.minimumPathRefreshInterval = minimumPathRefreshInterval
+        self.nowProvider = nowProvider
     }
     
     func startMonitoring() {
@@ -66,7 +73,9 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         monitor?.pathUpdateHandler = { [weak self] path in
             guard let self = self else { return }
             self.latestPathUsesWiredEthernet = path.usesInterfaceType(.wiredEthernet)
-            self.refreshNetworkState()
+            if self.shouldProcessPathUpdate(at: self.nowProvider()) {
+                self.refreshNetworkState()
+            }
         }
         monitor?.start(queue: workerQueue)
 
@@ -119,6 +128,16 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     private func refreshCycle() {
         refreshNetworkState()
         fetchPublicIP()
+    }
+
+    func shouldProcessPathUpdate(at now: Date) -> Bool {
+        if let lastPathRefreshAt,
+           now.timeIntervalSince(lastPathRefreshAt) < minimumPathRefreshInterval {
+            return false
+        }
+
+        lastPathRefreshAt = now
+        return true
     }
 
     private func refreshNetworkState() {
