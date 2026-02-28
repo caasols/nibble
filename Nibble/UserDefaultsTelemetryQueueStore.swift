@@ -9,6 +9,12 @@ protocol TelemetryQueueStoring {
 final class UserDefaultsTelemetryQueueStore: TelemetryQueueStoring {
     private let userDefaults: UserDefaults
     private let queueKey: String
+    private static let allowedPayloadKeysByEvent: [String: Set<String>] = [
+        "app_started": ["app_mode"],
+        "open_preferences": ["source"],
+        "toggle_telemetry": ["enabled"],
+        "toggle_public_ip": ["enabled"]
+    ]
 
     init(userDefaults: UserDefaults = .standard, queueKey: String = "telemetryPendingEvents") {
         self.userDefaults = userDefaults
@@ -20,6 +26,10 @@ final class UserDefaultsTelemetryQueueStore: TelemetryQueueStoring {
     }
 
     func enqueue(eventName: String, payload: [String: String]?) {
+        guard let allowedPayloadKeys = Self.allowedPayloadKeysByEvent[eventName] else {
+            return
+        }
+
         var events = queuedEvents()
         var event: [String: String] = [
             "name": eventName,
@@ -28,6 +38,10 @@ final class UserDefaultsTelemetryQueueStore: TelemetryQueueStoring {
 
         if let payload {
             for (key, value) in payload {
+                guard allowedPayloadKeys.contains(key) else {
+                    continue
+                }
+
                 event["payload.\(key)"] = value
             }
         }

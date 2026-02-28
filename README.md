@@ -64,6 +64,15 @@ Once launched, Nibble will appear in your menu bar. Click the icon to:
 - Nibble shows how many telemetry events are pending local send.
 - You can erase all pending unsent telemetry data in one click from Preferences.
 
+## Telemetry Data Summary
+
+- Nibble only queues allowlisted product events (`app_started`, `open_preferences`, `toggle_telemetry`, `toggle_public_ip`).
+- Allowed fields are limited per event and unknown fields are dropped.
+- Sensitive network identifiers are excluded by default (for example: public IP, private IP, MAC address, SSID, interface name).
+- Telemetry remains local in `UserDefaults` as pending unsent events unless you explicitly opt in.
+
+For the internal telemetry governance map, see `docs/telemetry-map.md`.
+
 ## Development
 
 ### Project Structure
