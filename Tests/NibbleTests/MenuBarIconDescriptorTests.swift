@@ -22,4 +22,10 @@ struct MenuBarIconDescriptorTests {
         #expect(descriptor.systemSymbolName == "network.slash")
         #expect(descriptor.accessibilityDescription == "Ethernet Disconnected")
     }
+
+    @Test func fallbackTitleUsesSingleLetterN() {
+        let descriptor = MenuBarIconDescriptor.forConnectionState(.active)
+
+        #expect(descriptor.fallbackTitle == "N")
+    }
 }

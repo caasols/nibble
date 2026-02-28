@@ -59,6 +59,8 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     @Published var connectionState: EthernetConnectionState = .disconnected
     @Published var publicIP: String?
     @Published var interfaces: [NetworkInterface] = []
+    @Published var downloadSpeedBytesPerSecond: Double = 0
+    @Published var uploadSpeedBytesPerSecond: Double = 0
     
     private var monitor: NWPathMonitor?
     private var timer: Timer?
@@ -67,6 +69,8 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     private var currentRefreshInterval: TimeInterval = 30
     private let settings: AppSettings
     private let orchestrator: NetworkMonitorOrchestrator
+    private let trafficSnapshotProvider: NetworkTrafficSnapshotProviding
+    private var speedSampler = NetworkSpeedSampler()
     private var latestPathUsesWiredEthernet = false
     private var lastPathRefreshAt: Date?
     private let minimumPathRefreshInterval: TimeInterval
@@ -78,11 +82,13 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             interfaceProvider: DefaultInterfaceSnapshotProvider(),
             publicIPProvider: DefaultPublicIPProvider()
         ),
+        trafficSnapshotProvider: NetworkTrafficSnapshotProviding = DefaultNetworkTrafficSnapshotProvider(),
         minimumPathRefreshInterval: TimeInterval = 0.5,
         nowProvider: @escaping () -> Date = Date.init
     ) {
         self.settings = settings
         self.orchestrator = orchestrator
+        self.trafficSnapshotProvider = trafficSnapshotProvider
         self.minimumPathRefreshInterval = minimumPathRefreshInterval
         self.nowProvider = nowProvider
     }
@@ -165,11 +171,16 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             guard let self = self else { return }
 
             let snapshot = self.orchestrator.snapshot(pathUsesWiredEthernet: self.latestPathUsesWiredEthernet)
-
+            let speedReading = self.speedSampler.nextSpeed(
+                using: self.trafficSnapshotProvider.currentSnapshot(),
+                at: self.nowProvider()
+            )
             DispatchQueue.main.async {
                 self.interfaces = snapshot.visibleInterfaces
                 self.connectionState = snapshot.connectionState
                 self.isEthernetConnected = snapshot.isEthernetConnected
+                self.downloadSpeedBytesPerSecond = speedReading.downloadBytesPerSecond
+                self.uploadSpeedBytesPerSecond = speedReading.uploadBytesPerSecond
             }
         }
     }

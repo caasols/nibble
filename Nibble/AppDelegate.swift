@@ -22,7 +22,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         self.updateCoordinator = UpdateCoordinator()
         self.networkMonitor = NetworkMonitor(settings: settings)
         self.dnsFlushService = DNSFlushService()
-        self.wiFiRefreshService = WiFiRefreshService()
+        self.wiFiRefreshService = WiFiRefreshService(cooldown: 0)
         super.init()
     }
     
@@ -115,7 +115,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             button.imagePosition = .imageOnly
         } else {
             button.image = nil
-            button.title = "Nibble"
+            button.title = descriptor.fallbackTitle
             button.imagePosition = .noImage
             button.toolTip = descriptor.accessibilityDescription
         }
@@ -175,34 +175,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         )
     }
 
-    func refreshWiFiWithConfirmation() {
-        let confirmationAlert = NSAlert()
-        confirmationAlert.messageText = LocalizationCatalog.localized("utility.wifi.refresh.confirm.title")
-        confirmationAlert.informativeText = LocalizationCatalog.localized("utility.wifi.refresh.confirm.message")
-        confirmationAlert.addButton(withTitle: LocalizationCatalog.localized("utility.wifi.refresh.confirm.action"))
-        confirmationAlert.addButton(withTitle: LocalizationCatalog.localized("common.cancel"))
-
-        guard confirmationAlert.runModal() == .alertFirstButtonReturn else {
-            return
-        }
-
-        switch wiFiRefreshService.refreshWiFi() {
-        case .success:
-            showUtilityResultAlert(
-                title: LocalizationCatalog.localized("utility.wifi.refresh.title"),
-                message: LocalizationCatalog.localized("utility.wifi.refresh.success")
-            )
-        case .cooldown(let remainingSeconds):
-            showUtilityResultAlert(
-                title: LocalizationCatalog.localized("utility.wifi.refresh.title"),
-                message: String(format: LocalizationCatalog.localized("utility.wifi.refresh.cooldown"), remainingSeconds)
-            )
-        case .failure:
-            showUtilityResultAlert(
-                title: LocalizationCatalog.localized("utility.wifi.refresh.title"),
-                message: LocalizationCatalog.localized("utility.wifi.refresh.failure")
-            )
-        }
+    func refreshWiFi() {
+        _ = wiFiRefreshService.refreshWiFi()
     }
 
     func makeFeedbackComposer() -> FeedbackComposer {
@@ -261,7 +235,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             return shortVersion
         }
 
-        return "1.0.0"
+        return "0.1.2"
     }
 
     private static func timestampForFilename() -> String {
