@@ -2,6 +2,7 @@ import SwiftUI
 import Network
 import SystemConfiguration
 import Combine
+import UniformTypeIdentifiers
 
 @MainActor
 class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
@@ -129,5 +130,79 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
         Task {
             await updateCoordinator.checkForUpdatesManually()
         }
+    }
+
+    func exportDiagnosticsReport() {
+        let includeSensitive = diagnosticsExportSensitivitySelection()
+        guard let includeSensitive else {
+            return
+        }
+
+        let panel = NSSavePanel()
+        panel.canCreateDirectories = true
+        panel.allowedContentTypes = [.json]
+        panel.nameFieldStringValue = "nibble-diagnostics-\(Self.timestampForFilename()).json"
+
+        guard panel.runModal() == .OK, let url = panel.url else {
+            return
+        }
+
+        do {
+            let data = try DiagnosticsExportBuilder.makeJSONData(
+                appVersion: Self.appVersionString(),
+                macOSVersion: ProcessInfo.processInfo.operatingSystemVersionString,
+                connectionState: networkMonitor.connectionState,
+                interfaces: networkMonitor.interfaces,
+                publicIP: networkMonitor.publicIP,
+                includeSensitiveIdentifiers: includeSensitive
+            )
+            try data.write(to: url, options: .atomic)
+            showDiagnosticsExportResultAlert(message: "Diagnostics exported to \(url.lastPathComponent).")
+        } catch {
+            showDiagnosticsExportResultAlert(message: "Diagnostics export failed: \(error.localizedDescription)")
+        }
+    }
+
+    private func diagnosticsExportSensitivitySelection() -> Bool? {
+        let alert = NSAlert()
+        alert.messageText = "Export Diagnostics"
+        alert.informativeText = "By default, diagnostics exclude public IP, local IP addresses, and hardware identifiers. Include sensitive identifiers only when explicitly needed for troubleshooting."
+        alert.addButton(withTitle: "Export Sanitized")
+        alert.addButton(withTitle: "Include Sensitive")
+        alert.addButton(withTitle: "Cancel")
+
+        let response = alert.runModal()
+        if response == .alertFirstButtonReturn {
+            return false
+        }
+
+        if response == .alertSecondButtonReturn {
+            return true
+        }
+
+        return nil
+    }
+
+    private func showDiagnosticsExportResultAlert(message: String) {
+        let alert = NSAlert()
+        alert.messageText = "Diagnostics Export"
+        alert.informativeText = message
+        alert.addButton(withTitle: "OK")
+        alert.runModal()
+    }
+
+    private static func appVersionString() -> String {
+        if let shortVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
+           !shortVersion.isEmpty {
+            return shortVersion
+        }
+
+        return "1.0.0"
+    }
+
+    private static func timestampForFilename() -> String {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyyMMdd-HHmmss"
+        return formatter.string(from: Date())
     }
 }

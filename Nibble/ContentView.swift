@@ -234,6 +234,20 @@ struct MenuItemsView: View {
                 .contentShape(Rectangle())
             }
             .buttonStyle(PlainButtonStyle())
+
+            Button(action: {
+                appDelegate.exportDiagnosticsReport()
+            }) {
+                HStack {
+                    Text("Export Diagnostics...")
+                        .font(.system(size: 13))
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
             
             Button(action: {
                 showingAbout = true
