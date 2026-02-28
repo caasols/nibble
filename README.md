@@ -12,6 +12,7 @@ Nibble sits quietly in your menubar, watching your ethernet so you don't have to
 - Detailed interface information (MAC address, IP addresses, status)
 - "Open at Login" functionality
 - Periodic and manual update checks against official releases
+- One-click diagnostics export with sanitized defaults
 - Clean, native macOS UI
 - Lightweight and efficient
 
@@ -79,6 +80,12 @@ For the internal telemetry governance map, see `docs/telemetry-map.md`.
 - Nibble checks for updates periodically using the official GitHub releases endpoint.
 - You can run an on-demand check from the menu or Preferences.
 - Before opening a download page, Nibble prompts for confirmation and shows release notes.
+
+## Diagnostics Export
+
+- Export a diagnostics JSON snapshot from the menu with one click.
+- By default, export is sanitized and excludes public IP, local IP addresses, and hardware identifiers.
+- You can explicitly choose to include sensitive identifiers when needed for deeper troubleshooting.
 
 ## Development
 
