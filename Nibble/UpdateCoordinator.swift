@@ -127,6 +127,6 @@ private extension Bundle {
             return shortVersion
         }
 
-        return "1.0.0"
+        return "0.1.2"
     }
 }

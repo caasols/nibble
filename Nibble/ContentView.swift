@@ -4,8 +4,7 @@ import AppKit
 struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
     @EnvironmentObject var updateCoordinator: UpdateCoordinator
-    @State private var showingAbout = false
-    @State private var showingFeedbackForm = false
+    @State private var showingPreferences = false
     
     var body: some View {
         VStack(spacing: 0) {
@@ -23,16 +22,16 @@ struct ContentView: View {
                 .padding(.vertical, 8)
             
             // Menu Items
-            MenuItemsView(showingAbout: $showingAbout, showingFeedbackForm: $showingFeedbackForm)
+            MenuItemsView(showingPreferences: $showingPreferences)
                 .padding(.bottom, 8)
         }
         .frame(width: 280)
         .environmentObject(appDelegate.networkMonitor)
-        .sheet(isPresented: $showingAbout) {
-            AboutView()
-        }
-        .sheet(isPresented: $showingFeedbackForm) {
-            FeedbackFormView(composer: appDelegate.makeFeedbackComposer())
+        .sheet(isPresented: $showingPreferences) {
+            PreferencesView()
+                .environmentObject(appDelegate)
+                .environmentObject(appDelegate.settings)
+                .environmentObject(updateCoordinator)
         }
         .alert(
             LocalizationCatalog.localized("update.available.title"),
@@ -184,8 +183,7 @@ private func copyToClipboard(_ value: String) {
 }
 
 struct MenuItemsView: View {
-    @Binding var showingAbout: Bool
-    @Binding var showingFeedbackForm: Bool
+    @Binding var showingPreferences: Bool
     @EnvironmentObject var appDelegate: AppDelegate
 
     private var openAtLoginBinding: Binding<Bool> {
@@ -214,42 +212,11 @@ struct MenuItemsView: View {
             }
             
             Button(action: {
-                let didOpenSettings = NSApp.sendAction(Selector(("showSettingsWindow:")), to: nil, from: nil)
-                if !didOpenSettings {
-                    _ = NSApp.sendAction(Selector(("showPreferencesWindow:")), to: nil, from: nil)
-                }
+                showingPreferences = true
             }) {
                 HStack {
                     Text(LocalizationCatalog.localized("menu.preferences"))
                         .font(.system(size: 13))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
-
-            Button(action: {
-                appDelegate.checkForUpdatesManually()
-            }) {
-                HStack {
-                    Text(LocalizationCatalog.localized("menu.check_updates"))
-                        .font(.system(size: 13))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
-
-            Button(action: {
-                appDelegate.exportDiagnosticsReport()
-            }) {
-                HStack {
-                    Text(LocalizationCatalog.localized("menu.export_diagnostics"))
-                    .font(.system(size: 13))
                     Spacer()
                 }
                 .padding(.horizontal, 16)
@@ -273,7 +240,7 @@ struct MenuItemsView: View {
             .buttonStyle(PlainButtonStyle())
 
             Button(action: {
-                appDelegate.refreshWiFiWithConfirmation()
+                appDelegate.refreshWiFi()
             }) {
                 HStack {
                     Text(LocalizationCatalog.localized("menu.refresh_wifi"))
@@ -286,37 +253,6 @@ struct MenuItemsView: View {
             }
             .buttonStyle(PlainButtonStyle())
 
-            Button(action: {
-                showingFeedbackForm = true
-            }) {
-                HStack {
-                    Text("Send Feedback...")
-                        .font(.system(size: 13))
-                    Spacer()
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
-            
-            Button(action: {
-                showingAbout = true
-            }) {
-                HStack {
-                    Text(LocalizationCatalog.localized("menu.about"))
-                        .font(.system(size: 13))
-                    Spacer()
-                    Text("v1.0.0")
-                        .font(.system(size: 11))
-                        .foregroundColor(.secondary)
-                }
-                .padding(.horizontal, 16)
-                .padding(.vertical, 6)
-                .contentShape(Rectangle())
-            }
-            .buttonStyle(PlainButtonStyle())
-            
             Divider()
                 .padding(.vertical, 8)
             

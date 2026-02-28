@@ -2,8 +2,18 @@ import SwiftUI
 
 struct PreferencesView: View {
     @Environment(\.dismiss) private var dismiss
+    @EnvironmentObject var appDelegate: AppDelegate
     @EnvironmentObject var settings: AppSettings
     @EnvironmentObject var updateCoordinator: UpdateCoordinator
+    @State private var showingFeedbackForm = false
+    @State private var showingAbout = false
+
+    private var openAtLoginBinding: Binding<Bool> {
+        Binding(
+            get: { appDelegate.loginItemController.isOpenAtLogin },
+            set: { appDelegate.loginItemController.setOpenAtLogin($0) }
+        )
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -17,6 +27,44 @@ struct PreferencesView: View {
                 }
             }
             
+            Divider()
+
+            VStack(alignment: .leading, spacing: 8) {
+                Text(LocalizationCatalog.localized("preferences.app_menu.title"))
+                    .font(.caption)
+                    .foregroundColor(.secondary)
+
+                Toggle(LocalizationCatalog.localized("menu.open_at_login"), isOn: openAtLoginBinding)
+
+                HStack(spacing: 10) {
+                    Button(LocalizationCatalog.localized("menu.check_updates")) {
+                        Task {
+                            await updateCoordinator.checkForUpdatesManually()
+                        }
+                    }
+
+                    Button(LocalizationCatalog.localized("menu.export_diagnostics")) {
+                        appDelegate.exportDiagnosticsReport()
+                    }
+                }
+
+                HStack(spacing: 10) {
+                    Button(LocalizationCatalog.localized("menu.send_feedback")) {
+                        showingFeedbackForm = true
+                    }
+
+                    Button(LocalizationCatalog.localized("menu.about")) {
+                        showingAbout = true
+                    }
+                }
+
+                if let message = appDelegate.loginItemController.lastErrorMessage {
+                    Text(message)
+                        .font(.caption)
+                        .foregroundColor(.red)
+                }
+            }
+
             Divider()
             
             VStack(alignment: .leading, spacing: 16) {
@@ -106,5 +154,14 @@ struct PreferencesView: View {
         }
         .padding()
         .frame(width: 460, height: 380)
+        .onAppear {
+            appDelegate.loginItemController.refreshFromSystem()
+        }
+        .sheet(isPresented: $showingFeedbackForm) {
+            FeedbackFormView(composer: appDelegate.makeFeedbackComposer())
+        }
+        .sheet(isPresented: $showingAbout) {
+            AboutView()
+        }
     }
 }

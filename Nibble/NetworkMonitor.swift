@@ -165,7 +165,6 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             guard let self = self else { return }
 
             let snapshot = self.orchestrator.snapshot(pathUsesWiredEthernet: self.latestPathUsesWiredEthernet)
-
             DispatchQueue.main.async {
                 self.interfaces = snapshot.visibleInterfaces
                 self.connectionState = snapshot.connectionState

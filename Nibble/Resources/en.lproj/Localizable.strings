@@ -11,10 +11,11 @@
 
 "menu.open_at_login" = "Open at Login";
 "menu.preferences" = "Preferences...";
-"menu.check_updates" = "Check for Updates...";
+"menu.check_updates" = "Check for updates...";
 "menu.export_diagnostics" = "Export Diagnostics...";
 "menu.flush_dns" = "Flush DNS Cache";
-"menu.refresh_wifi" = "Refresh Wi-Fi";
+"menu.refresh_wifi" = "Refresh Wifi";
+"menu.send_feedback" = "Send Feedback...";
 "menu.about" = "About Nibble";
 "menu.quit" = "Quit";
 
@@ -51,6 +52,7 @@
 "interface.type.bluetooth" = "Bluetooth";
 
 "preferences.title" = "Preferences";
+"preferences.app_menu.title" = "App Menu";
 "preferences.show_public_ip" = "Show Public IP Address";
 "preferences.public_ip_provider" = "Provider: %@ over HTTPS. Public IP display is optional and can be changed anytime.";
 "preferences.app_mode" = "App Mode";
@@ -99,7 +101,7 @@
 "interface.details.status" = "Status";
 "interface.details.ip_addresses" = "IP Addresses";
 
-"about.version" = "Version 1.0.0";
+"about.version" = "Version 0.1.2";
 "about.description" = "An open source menu bar app for monitoring Ethernet connections and network interfaces on macOS.";
 "about.github" = "GitHub Repository";
 "about.report_issue" = "Report an Issue";
