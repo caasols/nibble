@@ -2,41 +2,25 @@ import Foundation
 import SystemConfiguration
 
 final class DefaultInterfaceSnapshotProvider: InterfaceSnapshotProviding {
-    private var hardwarePortMap: [String: String] = [:]
+    private let hardwarePortProvider: HardwarePortMappingProviding
     private var authoritativeMetadata: [String: InterfaceClassification] = [:]
 
+    init(hardwarePortProvider: HardwarePortMappingProviding = DefaultHardwarePortMappingProvider()) {
+        self.hardwarePortProvider = hardwarePortProvider
+    }
+
     func snapshot(pathUsesWiredEthernet: Bool) -> InterfaceSnapshot {
-        buildHardwarePortMap()
+        hardwarePortProvider.refreshAsyncIfNeeded()
+        let hardwarePortMap = hardwarePortProvider.currentMap()
         authoritativeMetadata = InterfaceMetadataResolver.authoritativeMetadataByBSDName()
-        let observations = getInterfaceObservations()
+        let observations = getInterfaceObservations(hardwarePortMap: hardwarePortMap)
         return InterfaceSnapshotBuilder.build(
             observations: observations,
             pathUsesWiredEthernet: pathUsesWiredEthernet
         )
     }
 
-    private func buildHardwarePortMap() {
-        let task = Process()
-        task.launchPath = "/usr/sbin/networksetup"
-        task.arguments = ["-listallhardwareports"]
-
-        let pipe = Pipe()
-        task.standardOutput = pipe
-
-        do {
-            try task.run()
-            task.waitUntilExit()
-
-            let data = pipe.fileHandleForReading.readDataToEndOfFile()
-            if let output = String(data: data, encoding: .utf8) {
-                hardwarePortMap = HardwarePortMapper.parse(output)
-            }
-        } catch {
-            print("Failed to get hardware ports: \(error)")
-        }
-    }
-
-    private func getInterfaceObservations() -> [InterfaceObservation] {
+    private func getInterfaceObservations(hardwarePortMap: [String: String]) -> [InterfaceObservation] {
         var observations: [InterfaceObservation] = []
 
         var ifaddr: UnsafeMutablePointer<ifaddrs>?
