@@ -61,6 +61,7 @@ struct ContentView: View {
 struct ConnectionStatusView: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @EnvironmentObject var settings: AppSettings
+    @State private var didCopyPublicIP = false
 
     private var speedSummaryText: String {
         let download = NetworkSpeedFormatter.string(bytesPerSecond: networkMonitor.downloadSpeedBytesPerSecond)
@@ -114,23 +115,29 @@ struct ConnectionStatusView: View {
              
             if settings.showPublicIP {
                 HStack {
-                        Text(LocalizationCatalog.localized("public_ip.label"))
+                    Text(LocalizationCatalog.localized("public_ip.label"))
                         .font(.system(size: 13, weight: .medium))
-                        .foregroundColor(.secondary)
                     if let publicIP = networkMonitor.publicIP {
-                        Text(publicIP)
-                            .font(.system(size: 13, design: .monospaced))
-                            .textSelection(.enabled)
-                            .contextMenu {
-                                Button(LocalizationCatalog.localized("common.copy")) {
-                                    copyToClipboard(publicIP)
-                                }
-                            }
-                        Button(LocalizationCatalog.localized("common.copy")) {
+                        Button {
                             copyToClipboard(publicIP)
+                            didCopyPublicIP = true
+
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 1.2) {
+                                didCopyPublicIP = false
+                            }
+                        } label: {
+                            Text(publicIP)
+                                .font(.system(size: 13, design: .monospaced))
                         }
-                        .buttonStyle(.borderless)
+                        .buttonStyle(.plain)
+                        .foregroundColor(.primary)
                         .help(LocalizationCatalog.localized("public_ip.copy_help"))
+
+                        if didCopyPublicIP {
+                            Text(LocalizationCatalog.localized("public_ip.copied"))
+                                .font(.system(size: 11, weight: .medium))
+                                .foregroundColor(.green)
+                        }
                     } else {
                         Text(LocalizationCatalog.localized("common.loading"))
                             .font(.system(size: 13, design: .monospaced))
@@ -215,25 +222,38 @@ struct MenuItemsView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
+
+    private var quickActionsMenu: some View {
+        Menu {
+            Button(LocalizationCatalog.localized("menu.refresh_wifi")) {
+                appDelegate.refreshWiFi()
+            }
+
+            Button(LocalizationCatalog.localized("menu.flush_dns")) {
+                appDelegate.flushDNSCache()
+            }
+        } label: {
+            HStack {
+                Text(LocalizationCatalog.localized("menu.quick_actions"))
+                    .font(.system(size: 13))
+                Spacer()
+                Image(systemName: "chevron.right")
+                    .font(.system(size: 11))
+                    .foregroundColor(.secondary)
+            }
+            .padding(.horizontal, 16)
+            .padding(.vertical, 6)
+            .contentShape(Rectangle())
+        }
+        .menuStyle(.borderlessButton)
+    }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Divider()
                 .padding(.vertical, 8)
 
-            Text(LocalizationCatalog.localized("menu.quick_actions"))
-                .font(.system(size: 11, weight: .semibold))
-                .foregroundColor(.secondary)
-                .padding(.horizontal, 16)
-                .padding(.bottom, 4)
-
-            trayMenuButton(LocalizationCatalog.localized("menu.refresh_wifi")) {
-                appDelegate.refreshWiFi()
-            }
-
-            trayMenuButton(LocalizationCatalog.localized("menu.flush_dns")) {
-                appDelegate.flushDNSCache()
-            }
+            quickActionsMenu
 
             Divider()
                 .padding(.vertical, 8)

@@ -21,5 +21,6 @@ struct LocalizationCatalogTests {
         #expect(LocalizationCatalog.localized("menu.send_feedback", localeIdentifier: "es") == "Enviar comentarios...")
         #expect(LocalizationCatalog.localized("menu.check_updates", localeIdentifier: "en") == "Check for updates...")
         #expect(LocalizationCatalog.localized("menu.open_at_login", localeIdentifier: "en") == "Open at Startup")
+        #expect(LocalizationCatalog.localized("public_ip.copied", localeIdentifier: "en") == "IP copied")
     }
 }

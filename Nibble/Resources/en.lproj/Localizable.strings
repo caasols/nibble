@@ -42,6 +42,7 @@
 "speed.summary" = "%@ down | %@ up";
 "public_ip.label" = "Public IP Address:";
 "public_ip.copy_help" = "Copy public IP";
+"public_ip.copied" = "IP copied";
 "public_ip.transparency.enabled" = "Nibble requests your public IP from %@ at launch, when enabled, and every %d seconds during refresh. Turn this off to stop public IP requests.";
 "public_ip.transparency.disabled" = "Public IP lookups are off. Nibble does not request your public IP unless you enable this setting.";
 "interfaces.title" = "Interfaces";

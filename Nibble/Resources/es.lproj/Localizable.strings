@@ -42,6 +42,7 @@
 "speed.summary" = "%@ bajada | %@ subida";
 "public_ip.label" = "Direccion IP publica:";
 "public_ip.copy_help" = "Copiar IP publica";
+"public_ip.copied" = "IP copiada";
 "public_ip.transparency.enabled" = "Nibble solicita tu IP publica a %@ al iniciar, cuando esta activada y cada %d segundos durante el refresco. Desactivalo para detener estas solicitudes.";
 "public_ip.transparency.disabled" = "Las consultas de IP publica estan desactivadas. Nibble no solicita tu IP publica a menos que actives esta opcion.";
 "interfaces.title" = "Interfaces";
