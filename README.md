@@ -91,7 +91,7 @@ For the internal telemetry governance map, see `docs/telemetry-map.md`.
 ## In-App Feedback
 
 - Submit bug reports and feature requests from the menu without manually assembling issue templates.
-- Optionally attach a diagnostics JSON preview directly in the feedback payload.
+- Optionally attach a diagnostics JSON preview in clipboard-ready feedback text, then open GitHub issue creation without URL-embedded payload data.
 - Diagnostics inclusion is explicit and defaults to sanitized export.
 
 ## Development

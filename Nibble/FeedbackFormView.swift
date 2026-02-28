@@ -4,6 +4,7 @@ import AppKit
 struct FeedbackFormView: View {
     @Environment(\.dismiss) private var dismiss
     @StateObject private var composer: FeedbackComposer
+    @State private var submissionErrorMessage: String?
 
     init(composer: FeedbackComposer) {
         _composer = StateObject(wrappedValue: composer)
@@ -69,16 +70,40 @@ struct FeedbackFormView: View {
                 }
 
                 Button("Submit") {
-                    guard let url = composer.submissionURL() else {
+                    guard let payload = composer.submissionPayload() else {
                         return
                     }
 
-                    NSWorkspace.shared.open(url)
+                    submissionErrorMessage = nil
+
+                    NSPasteboard.general.clearContents()
+                    let didCopy = NSPasteboard.general.setString(payload.body, forType: .string)
+                    guard didCopy else {
+                        submissionErrorMessage = "Could not copy feedback to clipboard. Nothing was sent."
+                        return
+                    }
+
+                    let didOpenIssuePage = NSWorkspace.shared.open(payload.destinationURL)
+                    guard didOpenIssuePage else {
+                        submissionErrorMessage = "Feedback was copied, but the issue page could not be opened."
+                        return
+                    }
+
                     dismiss()
                 }
                 .disabled(!composer.canSubmit)
                 .keyboardShortcut(.defaultAction)
             }
+
+            if let submissionErrorMessage {
+                Text(submissionErrorMessage)
+                    .font(.caption)
+                    .foregroundColor(.red)
+            }
+
+            Text("Submit copies the prepared feedback markdown to your clipboard and opens the issue page without embedding your data in the URL.")
+                .font(.caption)
+                .foregroundColor(.secondary)
         }
         .padding()
         .frame(width: 560, height: 640)

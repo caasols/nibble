@@ -55,16 +55,16 @@ final class FeedbackComposer: ObservableObject {
 
     private let diagnosticsProvider: () -> FeedbackDiagnosticsContext
     private let nowProvider: () -> Date
-    private let baseURL: URL
+    private let issueCreationURL: URL
 
     init(
         diagnosticsProvider: @escaping () -> FeedbackDiagnosticsContext,
         nowProvider: @escaping () -> Date = Date.init,
-        baseURL: URL = URL(string: "https://github.com/caasols/nibble/issues/new")!
+        issueCreationURL: URL = URL(string: "https://github.com/caasols/nibble/issues/new")!
     ) {
         self.diagnosticsProvider = diagnosticsProvider
         self.nowProvider = nowProvider
-        self.baseURL = baseURL
+        self.issueCreationURL = issueCreationURL
     }
 
     var canSubmit: Bool {
@@ -72,21 +72,18 @@ final class FeedbackComposer: ObservableObject {
         !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
-    func submissionURL() -> URL? {
+    func submissionPayload() -> FeedbackSubmissionPayload? {
         guard canSubmit else {
             return nil
         }
 
-        var components = URLComponents(url: baseURL, resolvingAgainstBaseURL: false)
-        let title = "[\(category.title)] \(subject.trimmingCharacters(in: .whitespacesAndNewlines))"
+        let normalizedSubject = "[\(category.title)] \(subject.trimmingCharacters(in: .whitespacesAndNewlines))"
 
-        let body = makeBodyText()
-        components?.queryItems = [
-            URLQueryItem(name: "title", value: title),
-            URLQueryItem(name: "body", value: body)
-        ]
-
-        return components?.url
+        return FeedbackSubmissionPayload(
+            subject: normalizedSubject,
+            body: makeBodyText(subject: normalizedSubject),
+            destinationURL: issueCreationURL
+        )
     }
 
     func refreshDiagnosticsPreview() {
@@ -114,8 +111,11 @@ final class FeedbackComposer: ObservableObject {
         }
     }
 
-    private func makeBodyText() -> String {
+    private func makeBodyText(subject: String) -> String {
         var sections: [String] = [
+            "## Subject",
+            subject,
+            "",
             "## Feedback Type",
             category.title,
             "",
@@ -139,4 +139,10 @@ final class FeedbackComposer: ObservableObject {
 
         return sections.joined(separator: "\n")
     }
+}
+
+struct FeedbackSubmissionPayload {
+    let subject: String
+    let body: String
+    let destinationURL: URL
 }

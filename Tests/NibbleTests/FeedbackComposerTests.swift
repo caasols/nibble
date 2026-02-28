@@ -39,23 +39,25 @@ struct FeedbackComposerTests {
         #expect(composer.diagnosticsPreview?.contains("AA:BB:CC:DD:EE:FF") == true)
     }
 
-    @Test func submissionURLContainsFeedbackBodyAndOptionalDiagnostics() {
+    @Test func submissionPayloadContainsFeedbackAndOptionalDiagnostics() {
         let composer = FeedbackComposer(
             diagnosticsProvider: { sampleContext },
-            baseURL: URL(string: "https://example.com/issues/new")!
+            issueCreationURL: URL(string: "https://example.com/issues/new")!
         )
         composer.category = .feature
         composer.subject = "Need shortcut"
         composer.message = "Please add a global shortcut toggle."
         composer.contact = "user@example.com"
 
-        let withoutDiagnostics = composer.submissionURL()
-        #expect(withoutDiagnostics?.absoluteString.contains("global%20shortcut") == true)
-        #expect(withoutDiagnostics?.absoluteString.contains("appVersion") == false)
+        let withoutDiagnostics = composer.submissionPayload()
+        #expect(withoutDiagnostics?.destinationURL.absoluteString == "https://example.com/issues/new")
+        #expect(withoutDiagnostics?.subject == "[Feature Request] Need shortcut")
+        #expect(withoutDiagnostics?.body.contains("global shortcut") == true)
+        #expect(withoutDiagnostics?.body.contains("appVersion") == false)
 
         composer.includeDiagnostics = true
-        let withDiagnostics = composer.submissionURL()
-        #expect(withDiagnostics?.absoluteString.contains("appVersion") == true)
+        let withDiagnostics = composer.submissionPayload()
+        #expect(withDiagnostics?.body.contains("appVersion") == true)
     }
 }
 
