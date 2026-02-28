@@ -13,6 +13,7 @@ Nibble sits quietly in your menubar, watching your ethernet so you don't have to
 - "Open at Login" functionality
 - Periodic and manual update checks against official releases
 - One-click diagnostics export with sanitized defaults
+- In-app feedback form with optional diagnostics preview
 - Clean, native macOS UI
 - Lightweight and efficient
 
@@ -86,6 +87,12 @@ For the internal telemetry governance map, see `docs/telemetry-map.md`.
 - Export a diagnostics JSON snapshot from the menu with one click.
 - By default, export is sanitized and excludes public IP, local IP addresses, and hardware identifiers.
 - You can explicitly choose to include sensitive identifiers when needed for deeper troubleshooting.
+
+## In-App Feedback
+
+- Submit bug reports and feature requests from the menu without manually assembling issue templates.
+- Optionally attach a diagnostics JSON preview in clipboard-ready feedback text, then open GitHub issue creation without URL-embedded payload data.
+- Diagnostics inclusion is explicit and defaults to sanitized export.
 
 ## Development
 
