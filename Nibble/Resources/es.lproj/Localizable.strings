@@ -37,6 +37,8 @@
 "status.active" = "Activo";
 "status.inactive" = "Inactivo";
 "wired.status.label" = "Estado cableado:";
+"speed.label" = "Velocidad:";
+"speed.summary" = "%@ bajada | %@ subida";
 "public_ip.label" = "Direccion IP publica:";
 "public_ip.copy_help" = "Copiar IP publica";
 "public_ip.transparency.enabled" = "Nibble solicita tu IP publica a %@ al iniciar, cuando esta activada y cada %d segundos durante el refresco. Desactivalo para detener estas solicitudes.";

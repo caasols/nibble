@@ -62,6 +62,12 @@ struct ConnectionStatusView: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
     @EnvironmentObject var settings: AppSettings
 
+    private var speedSummaryText: String {
+        let download = NetworkSpeedFormatter.string(bytesPerSecond: networkMonitor.downloadSpeedBytesPerSecond)
+        let upload = NetworkSpeedFormatter.string(bytesPerSecond: networkMonitor.uploadSpeedBytesPerSecond)
+        return String(format: LocalizationCatalog.localized("speed.summary"), download, upload)
+    }
+
     private var statusText: String {
         switch networkMonitor.connectionState {
         case .active:
@@ -95,7 +101,17 @@ struct ConnectionStatusView: View {
                 Spacer()
             }
             .padding(.horizontal, 16)
-            
+
+            HStack {
+                Text(LocalizationCatalog.localized("speed.label"))
+                    .font(.system(size: 13, weight: .medium))
+                Text(speedSummaryText)
+                    .font(.system(size: 13, design: .monospaced))
+                    .foregroundColor(.secondary)
+                Spacer()
+            }
+            .padding(.horizontal, 16)
+             
             if settings.showPublicIP {
                 HStack {
                         Text(LocalizationCatalog.localized("public_ip.label"))
