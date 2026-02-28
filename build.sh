@@ -4,6 +4,10 @@ set -e
 
 echo "Building Nibble..."
 
+APP_NAME="Nibble"
+SCRATCH_PATH="${SCRATCH_PATH:-$HOME/Library/Caches/nibble-spm-build}"
+BUILD_DIR="${SCRATCH_PATH}/release"
+
 # Navigate to project directory
 cd "$(dirname "$0")"
 
@@ -15,13 +19,11 @@ fi
 
 # Build the project
 echo "Building with Swift Package Manager..."
-swift build -c release
+swift build -c release --scratch-path "${SCRATCH_PATH}"
 
 # Create app bundle
 echo "Creating app bundle..."
-APP_NAME="Nibble"
 BUNDLE_NAME="${APP_NAME}.app"
-BUILD_DIR=".build/release"
 
 # Create app bundle structure
 mkdir -p "build/${BUNDLE_NAME}/Contents/MacOS"
@@ -46,6 +48,7 @@ codesign --force --deep --sign - "build/${BUNDLE_NAME}" 2>/dev/null || echo "War
 echo ""
 echo "Build complete!"
 echo "App bundle created at: build/${BUNDLE_NAME}"
+echo "SwiftPM scratch path: ${SCRATCH_PATH}"
 echo ""
 echo "To run the app:"
 echo "  open build/${BUNDLE_NAME}"
