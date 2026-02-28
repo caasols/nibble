@@ -1,0 +1,112 @@
+"common.ok" = "Aceptar";
+"common.cancel" = "Cancelar";
+"common.done" = "Listo";
+"common.copy" = "Copiar";
+"common.copy_value" = "Copiar valor";
+"common.copy_address" = "Copiar direccion";
+"common.loading" = "Cargando...";
+"common.unavailable" = "No disponible";
+"common.unknown" = "Desconocido";
+"common.later" = "Mas tarde";
+
+"menu.open_at_login" = "Abrir al iniciar sesion";
+"menu.preferences" = "Preferencias...";
+"menu.check_updates" = "Buscar actualizaciones...";
+"menu.export_diagnostics" = "Exportar diagnosticos...";
+"menu.flush_dns" = "Vaciar cache DNS";
+"menu.refresh_wifi" = "Refrescar Wi-Fi";
+"menu.about" = "Acerca de Nibble";
+"menu.quit" = "Salir";
+
+"update.available.title" = "Actualizacion disponible";
+"update.available.download" = "Descargar";
+"update.available.message" = "La version %@ esta disponible.\n\nNotas de lanzamiento:\n%@";
+"update.available.no_notes" = "No hay notas disponibles.";
+
+"updates.status.enabled" = "Las comprobaciones de actualizacion estan activadas.";
+"updates.status.checked_recently" = "Comprobado recientemente.";
+"updates.status.in_progress" = "La comprobacion ya esta en curso.";
+"updates.status.up_to_date" = "Tu version esta actualizada.";
+"updates.status.available" = "La version %@ esta disponible.";
+"updates.status.unavailable" = "No se pueden buscar actualizaciones ahora.";
+
+"status.connected_active" = "Conectado (Activo)";
+"status.connected_inactive" = "Conectado (Inactivo)";
+"status.disconnected" = "Desconectado";
+"status.active" = "Activo";
+"status.inactive" = "Inactivo";
+"wired.status.label" = "Estado cableado:";
+"public_ip.label" = "Direccion IP publica:";
+"public_ip.copy_help" = "Copiar IP publica";
+"public_ip.transparency.enabled" = "Nibble solicita tu IP publica a %@ al iniciar, cuando esta activada y cada %d segundos durante el refresco. Desactivalo para detener estas solicitudes.";
+"public_ip.transparency.disabled" = "Las consultas de IP publica estan desactivadas. Nibble no solicita tu IP publica a menos que actives esta opcion.";
+"interfaces.title" = "Interfaces";
+"interface.mac" = "MAC: %@";
+"interface.type.ethernet" = "Ethernet";
+"interface.type.wifi" = "Wi-Fi";
+"interface.type.vpn" = "VPN";
+"interface.type.bridge" = "Puente";
+"interface.type.loopback" = "Loopback";
+"interface.type.awdl" = "AWDL";
+"interface.type.bluetooth" = "Bluetooth";
+
+"preferences.title" = "Preferencias";
+"preferences.show_public_ip" = "Mostrar direccion IP publica";
+"preferences.public_ip_provider" = "Proveedor: %@ por HTTPS. La IP publica es opcional y puede cambiarse en cualquier momento.";
+"preferences.app_mode" = "Modo de la app";
+"preferences.app_mode.menubar_dock" = "Barra de menu + Dock";
+"preferences.app_mode.menubar_only" = "Solo barra de menu";
+"preferences.app_mode.help.menubar_only" = "Nibble se ejecuta en la barra de menu y se oculta del Dock.";
+"preferences.app_mode.help.menubar_dock" = "Nibble aparece en el Dock y puede activarse como una app normal.";
+"preferences.refresh_interval" = "Intervalo de refresco: %d segundos";
+"preferences.telemetry" = "Telemetria";
+"preferences.telemetry.toggle" = "Compartir telemetria anonima";
+"preferences.telemetry.help" = "La telemetria es opcional y esta desactivada por defecto. Puedes cambiarla cuando quieras.";
+"preferences.telemetry.pending" = "Eventos de telemetria pendientes: %d";
+"preferences.telemetry.erase" = "Borrar telemetria pendiente";
+"preferences.updates" = "Actualizaciones";
+"preferences.updates.help" = "Nibble revisa periodicamente los lanzamientos oficiales de GitHub y tambien puede hacerlo a demanda.";
+"preferences.updates.check_now" = "Buscar actualizaciones ahora";
+
+"open_at_login.error" = "No se pudo actualizar la opcion Abrir al iniciar sesion. Intentalo otra vez en Configuracion del sistema.";
+
+"diagnostics.export.title" = "Exportar diagnosticos";
+"diagnostics.export.prompt" = "Por defecto, los diagnosticos excluyen IP publica, IPs locales e identificadores de hardware. Incluye datos sensibles solo cuando sea necesario para soporte.";
+"diagnostics.export.sanitized" = "Exportar saneado";
+"diagnostics.export.include_sensitive" = "Incluir sensibles";
+"diagnostics.export.success" = "Diagnosticos exportados a %@.";
+"diagnostics.export.failure" = "Error al exportar diagnosticos: %@";
+
+"utility.dns.flush.title" = "Vaciado DNS";
+"utility.dns.flush.success" = "La cache DNS se vacio correctamente.";
+"utility.dns.flush.failure" = "No se pudo vaciar la cache DNS. Intentalo de nuevo con permisos de administrador.";
+
+"utility.wifi.refresh.title" = "Refresco de Wi-Fi";
+"utility.wifi.refresh.confirm.title" = "Refrescar Wi-Fi";
+"utility.wifi.refresh.confirm.message" = "Esto apaga y enciende el Wi-Fi para forzar la reconexion. Las llamadas y descargas activas pueden interrumpirse.";
+"utility.wifi.refresh.confirm.action" = "Refrescar";
+"utility.wifi.refresh.success" = "Wi-Fi refrescado correctamente.";
+"utility.wifi.refresh.cooldown" = "Espera %d segundos antes de volver a refrescar Wi-Fi.";
+"utility.wifi.refresh.failure" = "No se pudo refrescar Wi-Fi. Verifica que este disponible e intentalo de nuevo.";
+
+"interface.details.title" = "Detalles de la interfaz";
+"interface.details.name" = "Nombre";
+"interface.details.display_name" = "Nombre visible";
+"interface.details.adapter" = "Adaptador";
+"interface.details.route_role" = "Rol de ruta";
+"interface.details.media" = "Medio de interfaz";
+"interface.details.mac" = "Direccion MAC";
+"interface.details.status" = "Estado";
+"interface.details.ip_addresses" = "Direcciones IP";
+
+"about.version" = "Version 1.0.0";
+"about.description" = "Aplicacion de barra de menu de codigo abierto para monitorizar conexiones Ethernet e interfaces de red en macOS.";
+"about.github" = "Repositorio en GitHub";
+"about.report_issue" = "Reportar un problema";
+
+"route_role.none" = "Ninguno";
+"route_role.default" = "Ruta predeterminada";
+
+"menubar.icon.active" = "Ethernet activo";
+"menubar.icon.inactive" = "Ethernet inactivo";
+"menubar.icon.disconnected" = "Ethernet desconectado";

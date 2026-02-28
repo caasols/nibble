@@ -7,7 +7,7 @@ struct AboutView: View {
         VStack(spacing: 20) {
             HStack {
                 Spacer()
-                Button("Done") {
+                Button(LocalizationCatalog.localized("common.done")) {
                     dismiss()
                 }
             }
@@ -20,11 +20,11 @@ struct AboutView: View {
                 .font(.title)
                 .fontWeight(.bold)
             
-            Text("Version 1.0.0")
+            Text(LocalizationCatalog.localized("about.version"))
                 .font(.subheadline)
                 .foregroundColor(.secondary)
             
-            Text("An open source menu bar app for monitoring Ethernet connections and network interfaces on macOS.")
+            Text(LocalizationCatalog.localized("about.description"))
                 .font(.body)
                 .multilineTextAlignment(.center)
                 .padding(.horizontal)
@@ -32,8 +32,8 @@ struct AboutView: View {
             Divider()
             
             VStack(spacing: 8) {
-                Link("GitHub Repository", destination: URL(string: "https://github.com/caasols/nibble")!)
-                Link("Report an Issue", destination: URL(string: "https://github.com/caasols/nibble/issues")!)
+                Link(LocalizationCatalog.localized("about.github"), destination: URL(string: "https://github.com/caasols/nibble")!)
+                Link(LocalizationCatalog.localized("about.report_issue"), destination: URL(string: "https://github.com/caasols/nibble/issues")!)
             }
             
             Spacer()

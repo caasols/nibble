@@ -9,17 +9,17 @@ struct MenuBarIconDescriptor: Equatable {
         case .active:
             return MenuBarIconDescriptor(
                 systemSymbolName: "network",
-                accessibilityDescription: "Ethernet Active"
+                accessibilityDescription: LocalizationCatalog.localized("menubar.icon.active")
             )
         case .inactive:
             return MenuBarIconDescriptor(
                 systemSymbolName: "exclamationmark.network",
-                accessibilityDescription: "Ethernet Inactive"
+                accessibilityDescription: LocalizationCatalog.localized("menubar.icon.inactive")
             )
         case .disconnected:
             return MenuBarIconDescriptor(
                 systemSymbolName: "network.slash",
-                accessibilityDescription: "Ethernet Disconnected"
+                accessibilityDescription: LocalizationCatalog.localized("menubar.icon.disconnected")
             )
         }
     }

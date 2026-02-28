@@ -52,7 +52,7 @@ final class LoginItemController: ObservableObject {
             isOpenAtLogin = manager.isEnabled()
         } catch {
             isOpenAtLogin = previous
-            lastErrorMessage = "Could not update Open at Login. Please try again in System Settings."
+            lastErrorMessage = LocalizationCatalog.localized("open_at_login.error")
         }
     }
 }

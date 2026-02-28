@@ -35,22 +35,26 @@ struct ContentView: View {
             FeedbackFormView(composer: appDelegate.makeFeedbackComposer())
         }
         .alert(
-            "Update Available",
+            LocalizationCatalog.localized("update.available.title"),
             isPresented: Binding(
                 get: { updateCoordinator.updatePromptRelease != nil },
                 set: { if !$0 { updateCoordinator.dismissUpdatePrompt() } }
             ),
             presenting: updateCoordinator.updatePromptRelease
         ) { release in
-            Button("Later", role: .cancel) {
+            Button(LocalizationCatalog.localized("common.later"), role: .cancel) {
                 updateCoordinator.dismissUpdatePrompt()
             }
-            Button("Download") {
+            Button(LocalizationCatalog.localized("update.available.download")) {
                 NSWorkspace.shared.open(release.downloadURL)
                 updateCoordinator.dismissUpdatePrompt()
             }
         } message: { release in
-            Text("Version \(release.version) is available.\n\nRelease notes:\n\(release.notes.isEmpty ? "No notes provided." : release.notes)")
+            Text(String(
+                format: LocalizationCatalog.localized("update.available.message"),
+                release.version,
+                release.notes.isEmpty ? LocalizationCatalog.localized("update.available.no_notes") : release.notes
+            ))
         }
     }
 }
@@ -62,11 +66,11 @@ struct ConnectionStatusView: View {
     private var statusText: String {
         switch networkMonitor.connectionState {
         case .active:
-            return "Connected (Active)"
+            return LocalizationCatalog.localized("status.connected_active")
         case .inactive:
-            return "Connected (Inactive)"
+            return LocalizationCatalog.localized("status.connected_inactive")
         case .disconnected:
-            return "Disconnected"
+            return LocalizationCatalog.localized("status.disconnected")
         }
     }
 
@@ -84,7 +88,7 @@ struct ConnectionStatusView: View {
     var body: some View {
         VStack(spacing: 8) {
             HStack {
-                Text("Wired Status:")
+                Text(LocalizationCatalog.localized("wired.status.label"))
                     .font(.system(size: 13, weight: .medium))
                 Text(statusText)
                     .font(.system(size: 13))
@@ -95,7 +99,7 @@ struct ConnectionStatusView: View {
             
             if settings.showPublicIP {
                 HStack {
-                    Text("Public IP Address:")
+                        Text(LocalizationCatalog.localized("public_ip.label"))
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.secondary)
                     if let publicIP = networkMonitor.publicIP {
@@ -103,17 +107,17 @@ struct ConnectionStatusView: View {
                             .font(.system(size: 13, design: .monospaced))
                             .textSelection(.enabled)
                             .contextMenu {
-                                Button("Copy") {
+                                Button(LocalizationCatalog.localized("common.copy")) {
                                     copyToClipboard(publicIP)
                                 }
                             }
-                        Button("Copy") {
+                        Button(LocalizationCatalog.localized("common.copy")) {
                             copyToClipboard(publicIP)
                         }
                         .buttonStyle(.borderless)
-                        .help("Copy public IP")
+                        .help(LocalizationCatalog.localized("public_ip.copy_help"))
                     } else {
-                        Text("Loading...")
+                        Text(LocalizationCatalog.localized("common.loading"))
                             .font(.system(size: 13, design: .monospaced))
                     }
                     Spacer()
@@ -129,7 +133,7 @@ struct InterfacesSection: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Text("Interfaces")
+            Text(LocalizationCatalog.localized("interfaces.title"))
                 .font(.system(size: 12, weight: .medium))
                 .foregroundColor(.secondary)
                 .padding(.horizontal, 16)
@@ -154,7 +158,7 @@ struct InterfaceRow: View {
                 VStack(alignment: .leading, spacing: 2) {
                     Text("\(interface.type) (\(interface.name))")
                         .font(.system(size: 13))
-                    Text("MAC: \(interface.hardwareAddress ?? "Unavailable")")
+                    Text(String(format: LocalizationCatalog.localized("interface.mac"), interface.hardwareAddress ?? LocalizationCatalog.localized("common.unavailable")))
                         .font(.system(size: 11, design: .monospaced))
                         .foregroundColor(.secondary)
                 }
@@ -193,7 +197,7 @@ struct MenuItemsView: View {
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
-            Toggle("Open at Login", isOn: openAtLoginBinding)
+            Toggle(LocalizationCatalog.localized("menu.open_at_login"), isOn: openAtLoginBinding)
                 .font(.system(size: 13))
                 .padding(.horizontal, 12)
                 .padding(.vertical, 6)
@@ -216,7 +220,7 @@ struct MenuItemsView: View {
                 }
             }) {
                 HStack {
-                    Text("Preferences...")
+                    Text(LocalizationCatalog.localized("menu.preferences"))
                         .font(.system(size: 13))
                     Spacer()
                 }
@@ -230,7 +234,7 @@ struct MenuItemsView: View {
                 appDelegate.checkForUpdatesManually()
             }) {
                 HStack {
-                    Text("Check for Updates...")
+                    Text(LocalizationCatalog.localized("menu.check_updates"))
                         .font(.system(size: 13))
                     Spacer()
                 }
@@ -244,7 +248,35 @@ struct MenuItemsView: View {
                 appDelegate.exportDiagnosticsReport()
             }) {
                 HStack {
-                    Text("Export Diagnostics...")
+                    Text(LocalizationCatalog.localized("menu.export_diagnostics"))
+                    .font(.system(size: 13))
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Button(action: {
+                appDelegate.flushDNSCache()
+            }) {
+                HStack {
+                    Text(LocalizationCatalog.localized("menu.flush_dns"))
+                        .font(.system(size: 13))
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Button(action: {
+                appDelegate.refreshWiFiWithConfirmation()
+            }) {
+                HStack {
+                    Text(LocalizationCatalog.localized("menu.refresh_wifi"))
                         .font(.system(size: 13))
                     Spacer()
                 }
@@ -272,7 +304,7 @@ struct MenuItemsView: View {
                 showingAbout = true
             }) {
                 HStack {
-                    Text("About Nibble")
+                    Text(LocalizationCatalog.localized("menu.about"))
                         .font(.system(size: 13))
                     Spacer()
                     Text("v1.0.0")
@@ -292,7 +324,7 @@ struct MenuItemsView: View {
                 NSApplication.shared.terminate(nil)
             }) {
                 HStack {
-                    Text("Quit")
+                    Text(LocalizationCatalog.localized("menu.quit"))
                         .font(.system(size: 13))
                     Spacer()
                 }

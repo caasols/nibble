@@ -67,21 +67,21 @@ enum InterfaceSnapshotBuilder {
     static func typeName(for medium: InterfaceMedium) -> String {
         switch medium {
         case .wired:
-            return "Ethernet"
+            return LocalizationCatalog.localized("interface.type.ethernet")
         case .wiFi:
-            return "Wi-Fi"
+            return LocalizationCatalog.localized("interface.type.wifi")
         case .vpn:
-            return "VPN"
+            return LocalizationCatalog.localized("interface.type.vpn")
         case .bridge:
-            return "Bridge"
+            return LocalizationCatalog.localized("interface.type.bridge")
         case .loopback:
-            return "Loopback"
+            return LocalizationCatalog.localized("interface.type.loopback")
         case .awdl:
-            return "AWDL"
+            return LocalizationCatalog.localized("interface.type.awdl")
         case .bluetooth:
-            return "Bluetooth"
+            return LocalizationCatalog.localized("interface.type.bluetooth")
         case .unknown:
-            return "Unknown"
+            return LocalizationCatalog.localized("common.unknown")
         }
     }
 

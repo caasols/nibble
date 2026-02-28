@@ -44,10 +44,14 @@ final class AppSettings: ObservableObject {
 
     var publicIPTransparencySummary: String {
         if showPublicIP {
-            return "Nibble requests your public IP from \(publicIPProviderHost) at launch, when enabled, and every \(refreshInterval) seconds during refresh. Turn this off to stop public IP requests."
+            return String(
+                format: LocalizationCatalog.localized("public_ip.transparency.enabled"),
+                publicIPProviderHost,
+                refreshInterval
+            )
         }
 
-        return "Public IP lookups are off. Nibble does not request your public IP unless you enable this setting."
+        return LocalizationCatalog.localized("public_ip.transparency.disabled")
     }
 
     private let userDefaults: UserDefaults
