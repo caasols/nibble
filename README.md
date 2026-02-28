@@ -28,6 +28,8 @@ Nibble sits quietly in your menubar, watching your ethernet so you don't have to
 3. Drag `Nibble.app` to your Applications folder
 4. Launch the app
 
+Release artifacts are Developer ID signed, notarized, and validated by CI hygiene checks before publication.
+
 ### Build from Source
 
 ```bash
@@ -82,6 +84,18 @@ Or build from command line:
 ```bash
 swift build
 ```
+
+## Release Process
+
+Nibble uses a dedicated release workflow in `.github/workflows/release.yml` that:
+
+- builds the app bundle
+- signs with Developer ID certificate
+- notarizes and staples with Apple notarytool
+- checks artifact hygiene (signature, bundle ID, archive contents)
+- publishes zip and checksum to GitHub Releases
+
+See `CONTRIBUTING.md` for required secrets and release runbook details.
 
 ## Contributing
 

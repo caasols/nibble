@@ -19,6 +19,30 @@ GitHub Actions defines two lanes in `.github/workflows/ci.yml`:
 
 For branch protection verification, open a PR to `main` and confirm only `stable-build-and-test` is required.
 
+## Release Lane
+
+GitHub Actions release automation is defined in `.github/workflows/release.yml`.
+
+- Trigger automatically on tags matching `v*`.
+- Supports manual dispatch with a `tag_name` input.
+- Builds release app bundle, signs with Developer ID, notarizes with Apple notarytool, runs artifact hygiene checks, uploads release artifacts, and publishes a GitHub Release.
+
+Required repository secrets:
+
+- `APPLE_DEVELOPER_ID_APPLICATION_CERT_BASE64` (base64-encoded `.p12`)
+- `APPLE_DEVELOPER_ID_APPLICATION_CERT_PASSWORD`
+- `APPLE_SIGNING_IDENTITY` (example: `Developer ID Application: Example, Inc. (TEAMID)`)
+- `APPLE_TEAM_ID`
+- `APPLE_NOTARY_KEY_ID`
+- `APPLE_NOTARY_ISSUER_ID`
+- `APPLE_NOTARY_API_KEY_BASE64` (base64-encoded App Store Connect API key `.p8`)
+
+Local verification command for artifact checks:
+
+```bash
+make release-hygiene-test
+```
+
 ## Pull Request Expectations
 
 - Keep PRs focused and small when possible.
