@@ -26,7 +26,7 @@ struct InterfaceDetailView: View {
                     DetailRow(label: "Adapter", value: interface.adapterDescription ?? "Unknown")
                     DetailRow(label: "Route Role", value: interface.routeRole.displayName)
                     DetailRow(label: "Interface Media", value: interface.type)
-                    CopyableDetailRow(label: "Hardware Address", value: interface.hardwareAddress ?? "N/A")
+                    CopyableDetailRow(label: "MAC Address", value: interface.hardwareAddress ?? "Unavailable")
                     DetailRow(label: "Status", value: interface.isActive ? "Active" : "Inactive")
                     
                     if !interface.addresses.isEmpty {
@@ -38,6 +38,8 @@ struct InterfaceDetailView: View {
                         ForEach(interface.addresses, id: \.self) { address in
                             CopyableValueRow(value: address)
                         }
+                    } else {
+                        DetailRow(label: "IP Addresses", value: "Unavailable")
                     }
                 }
                 .padding()
@@ -78,10 +80,10 @@ struct CopyableDetailRow: View {
                     .lineLimit(1)
                 Spacer()
                 Button("Copy") {
-                    NSPasteboard.general.clearContents()
-                    NSPasteboard.general.setString(value, forType: .string)
+                    copyToClipboard(value)
                 }
-                .buttonStyle(.link)
+                .buttonStyle(.borderless)
+                .help("Copy value")
             }
         }
     }
@@ -95,12 +97,23 @@ struct CopyableValueRow: View {
             Text(value)
                 .font(.system(.body, design: .monospaced))
                 .foregroundColor(.secondary)
+                .textSelection(.enabled)
+                .contextMenu {
+                    Button("Copy") {
+                        copyToClipboard(value)
+                    }
+                }
             Spacer()
             Button("Copy") {
-                NSPasteboard.general.clearContents()
-                NSPasteboard.general.setString(value, forType: .string)
+                copyToClipboard(value)
             }
-            .buttonStyle(.link)
+            .buttonStyle(.borderless)
+            .help("Copy address")
         }
     }
+}
+
+private func copyToClipboard(_ value: String) {
+    NSPasteboard.general.clearContents()
+    NSPasteboard.general.setString(value, forType: .string)
 }

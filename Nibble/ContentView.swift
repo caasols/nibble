@@ -1,4 +1,5 @@
 import SwiftUI
+import AppKit
 
 struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
@@ -74,8 +75,24 @@ struct ConnectionStatusView: View {
                     Text("Public IP Address:")
                         .font(.system(size: 13, weight: .medium))
                         .foregroundColor(.secondary)
-                    Text(networkMonitor.publicIP ?? "Loading...")
-                        .font(.system(size: 13, design: .monospaced))
+                    if let publicIP = networkMonitor.publicIP {
+                        Text(publicIP)
+                            .font(.system(size: 13, design: .monospaced))
+                            .textSelection(.enabled)
+                            .contextMenu {
+                                Button("Copy") {
+                                    copyToClipboard(publicIP)
+                                }
+                            }
+                        Button("Copy") {
+                            copyToClipboard(publicIP)
+                        }
+                        .buttonStyle(.borderless)
+                        .help("Copy public IP")
+                    } else {
+                        Text("Loading...")
+                            .font(.system(size: 13, design: .monospaced))
+                    }
                     Spacer()
                 }
                 .padding(.horizontal, 16)
@@ -111,8 +128,13 @@ struct InterfaceRow: View {
             showingDetails = true
         }) {
             HStack {
-                Text("\(interface.type) (\(interface.name))")
-                    .font(.system(size: 13))
+                VStack(alignment: .leading, spacing: 2) {
+                    Text("\(interface.type) (\(interface.name))")
+                        .font(.system(size: 13))
+                    Text("MAC: \(interface.hardwareAddress ?? "Unavailable")")
+                        .font(.system(size: 11, design: .monospaced))
+                        .foregroundColor(.secondary)
+                }
                 Spacer()
                 Image(systemName: "chevron.right")
                     .font(.system(size: 11))
@@ -127,6 +149,11 @@ struct InterfaceRow: View {
             InterfaceDetailView(interface: interface)
         }
     }
+}
+
+private func copyToClipboard(_ value: String) {
+    NSPasteboard.general.clearContents()
+    NSPasteboard.general.setString(value, forType: .string)
 }
 
 struct MenuItemsView: View {
