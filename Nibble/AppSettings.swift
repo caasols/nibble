@@ -30,6 +30,14 @@ final class AppSettings: ObservableObject {
         }
     }
 
+    @Published var telemetryEnabled: Bool {
+        didSet {
+            userDefaults.set(telemetryEnabled, forKey: Keys.telemetryEnabled)
+        }
+    }
+
+    @Published private(set) var pendingTelemetryEventCount: Int
+
     var publicIPProviderHost: String {
         "api.ipify.org"
     }
@@ -43,20 +51,34 @@ final class AppSettings: ObservableObject {
     }
 
     private let userDefaults: UserDefaults
+    private let telemetryStore: TelemetryQueueStoring
 
-    init(userDefaults: UserDefaults = .standard) {
+    init(
+        userDefaults: UserDefaults = .standard,
+        telemetryStore: TelemetryQueueStoring? = nil
+    ) {
         self.userDefaults = userDefaults
+        let resolvedTelemetryStore = telemetryStore ?? UserDefaultsTelemetryQueueStore(userDefaults: userDefaults)
+        self.telemetryStore = resolvedTelemetryStore
         self.refreshInterval = Self.normalizedRefreshInterval(
             Self.integer(forKey: Keys.refreshInterval, defaultValue: 30, in: userDefaults)
         )
         self.showPublicIP = Self.bool(forKey: Keys.showPublicIP, defaultValue: true, in: userDefaults)
         self.appMode = Self.appMode(in: userDefaults)
+        self.telemetryEnabled = Self.bool(forKey: Keys.telemetryEnabled, defaultValue: false, in: userDefaults)
+        self.pendingTelemetryEventCount = resolvedTelemetryStore.pendingEventCount
+    }
+
+    func erasePendingTelemetryData() {
+        telemetryStore.clearPendingEvents()
+        pendingTelemetryEventCount = telemetryStore.pendingEventCount
     }
 
     private enum Keys {
         static let refreshInterval = "refreshInterval"
         static let showPublicIP = "showPublicIP"
         static let appMode = "appMode"
+        static let telemetryEnabled = "telemetryEnabled"
         static let startHidden = "startHidden"
     }
 

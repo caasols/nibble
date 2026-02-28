@@ -57,6 +57,13 @@ Once launched, Nibble will appear in your menu bar. Click the icon to:
 - Requests occur at startup, when the setting is enabled, and on each refresh cycle.
 - When disabled, Nibble does not request the public IP.
 
+## Telemetry Controls
+
+- Telemetry sharing is opt-in and disabled by default.
+- You can enable or disable telemetry anytime in Preferences.
+- Nibble shows how many telemetry events are pending local send.
+- You can erase all pending unsent telemetry data in one click from Preferences.
+
 ## Development
 
 ### Project Structure

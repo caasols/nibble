@@ -12,6 +12,8 @@ struct AppSettingsTests {
         #expect(settings.refreshInterval == 30)
         #expect(settings.showPublicIP)
         #expect(settings.appMode == .menuBarAndDock)
+        #expect(settings.telemetryEnabled == false)
+        #expect(settings.pendingTelemetryEventCount == 0)
     }
 
     @Test func refreshIntervalIsNormalizedToAllowedRangeAndStep() {
@@ -43,6 +45,10 @@ struct AppSettingsTests {
         #expect(settings.refreshInterval == 120)
         #expect(!settings.showPublicIP)
         #expect(settings.appMode == .menuBarOnly)
+
+        settings.telemetryEnabled = true
+        settings = AppSettings(userDefaults: defaults)
+        #expect(settings.telemetryEnabled)
     }
 
     @Test func appModeFallsBackToLegacyStartHiddenPreference() {
@@ -76,5 +82,22 @@ struct AppSettingsTests {
         settings.showPublicIP = false
 
         #expect(settings.publicIPTransparencySummary == "Public IP lookups are off. Nibble does not request your public IP unless you enable this setting.")
+    }
+
+    @Test func erasePendingTelemetryDataClearsStoredQueueCount() {
+        let defaults = UserDefaults(suiteName: "AppSettingsTests.telemetryClear")!
+        defaults.removePersistentDomain(forName: "AppSettingsTests.telemetryClear")
+
+        let telemetryStore = UserDefaultsTelemetryQueueStore(userDefaults: defaults)
+        telemetryStore.enqueue(eventName: "app_started", payload: ["source": "test"])
+        telemetryStore.enqueue(eventName: "open_preferences", payload: nil)
+
+        let settings = AppSettings(userDefaults: defaults, telemetryStore: telemetryStore)
+        #expect(settings.pendingTelemetryEventCount == 2)
+
+        settings.erasePendingTelemetryData()
+
+        #expect(settings.pendingTelemetryEventCount == 0)
+        #expect(telemetryStore.pendingEventCount == 0)
     }
 }

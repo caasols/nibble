@@ -56,6 +56,27 @@ struct PreferencesView: View {
                         set: { settings.refreshInterval = Int($0) }
                     ), in: 10...300, step: 10)
                 }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Telemetry")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Toggle("Share anonymous telemetry", isOn: $settings.telemetryEnabled)
+
+                    Text("Telemetry is opt-in and disabled by default. You can change this anytime.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text("Pending unsent telemetry events: \(settings.pendingTelemetryEventCount)")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Button("Erase Pending Telemetry Data") {
+                        settings.erasePendingTelemetryData()
+                    }
+                    .disabled(settings.pendingTelemetryEventCount == 0)
+                }
             }
             
             Spacer()
