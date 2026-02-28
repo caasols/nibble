@@ -9,12 +9,14 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
     var popover: NSPopover!
     let settings: AppSettings
     let loginItemController: LoginItemController
+    let updateCoordinator: UpdateCoordinator
     @Published var networkMonitor: NetworkMonitor
     private var cancellables = Set<AnyCancellable>()
     
     override init() {
         self.settings = AppSettings()
         self.loginItemController = LoginItemController()
+        self.updateCoordinator = UpdateCoordinator()
         self.networkMonitor = NetworkMonitor(settings: settings)
         super.init()
     }
@@ -37,6 +39,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
             rootView: ContentView()
                 .environmentObject(self)
                 .environmentObject(settings)
+                .environmentObject(updateCoordinator)
         )
         
         // Setup network monitoring
@@ -55,6 +58,18 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
          
         // Update menu bar icon based on connection status
         updateMenuBarIcon()
+
+        Timer.publish(every: 6 * 60 * 60, on: .main, in: .common)
+            .autoconnect()
+            .sink { [weak self] _ in
+                guard let self else { return }
+                Task { await self.updateCoordinator.checkForUpdatesPeriodicallyIfNeeded() }
+            }
+            .store(in: &cancellables)
+
+        Task {
+            await updateCoordinator.checkForUpdatesPeriodicallyIfNeeded()
+        }
     }
 
     func applicationWillTerminate(_ notification: Notification) {
@@ -107,6 +122,12 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject {
 
         if appMode == .menuBarAndDock {
             NSApplication.shared.activate(ignoringOtherApps: false)
+        }
+    }
+
+    func checkForUpdatesManually() {
+        Task {
+            await updateCoordinator.checkForUpdatesManually()
         }
     }
 }

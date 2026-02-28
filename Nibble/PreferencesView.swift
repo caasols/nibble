@@ -3,6 +3,7 @@ import SwiftUI
 struct PreferencesView: View {
     @Environment(\.dismiss) private var dismiss
     @EnvironmentObject var settings: AppSettings
+    @EnvironmentObject var updateCoordinator: UpdateCoordinator
     
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
@@ -77,11 +78,33 @@ struct PreferencesView: View {
                     }
                     .disabled(settings.pendingTelemetryEventCount == 0)
                 }
+
+                VStack(alignment: .leading, spacing: 8) {
+                    Text("Updates")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    Text("Nibble checks the official GitHub releases feed periodically and can also check on demand.")
+                        .font(.caption)
+                        .foregroundColor(.secondary)
+
+                    HStack(spacing: 10) {
+                        Button("Check for Updates Now") {
+                            Task {
+                                await updateCoordinator.checkForUpdatesManually()
+                            }
+                        }
+
+                        Text(updateCoordinator.statusMessage)
+                            .font(.caption)
+                            .foregroundColor(.secondary)
+                    }
+                }
             }
             
             Spacer()
         }
         .padding()
-        .frame(width: 440, height: 300)
+        .frame(width: 460, height: 380)
     }
 }

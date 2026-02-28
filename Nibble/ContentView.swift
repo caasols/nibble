@@ -3,6 +3,7 @@ import AppKit
 
 struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
+    @EnvironmentObject var updateCoordinator: UpdateCoordinator
     @State private var showingAbout = false
     
     var body: some View {
@@ -28,6 +29,24 @@ struct ContentView: View {
         .environmentObject(appDelegate.networkMonitor)
         .sheet(isPresented: $showingAbout) {
             AboutView()
+        }
+        .alert(
+            "Update Available",
+            isPresented: Binding(
+                get: { updateCoordinator.updatePromptRelease != nil },
+                set: { if !$0 { updateCoordinator.dismissUpdatePrompt() } }
+            ),
+            presenting: updateCoordinator.updatePromptRelease
+        ) { release in
+            Button("Later", role: .cancel) {
+                updateCoordinator.dismissUpdatePrompt()
+            }
+            Button("Download") {
+                NSWorkspace.shared.open(release.downloadURL)
+                updateCoordinator.dismissUpdatePrompt()
+            }
+        } message: { release in
+            Text("Version \(release.version) is available.\n\nRelease notes:\n\(release.notes.isEmpty ? "No notes provided." : release.notes)")
         }
     }
 }
@@ -193,6 +212,20 @@ struct MenuItemsView: View {
             }) {
                 HStack {
                     Text("Preferences...")
+                        .font(.system(size: 13))
+                    Spacer()
+                }
+                .padding(.horizontal, 16)
+                .padding(.vertical, 6)
+                .contentShape(Rectangle())
+            }
+            .buttonStyle(PlainButtonStyle())
+
+            Button(action: {
+                appDelegate.checkForUpdatesManually()
+            }) {
+                HStack {
+                    Text("Check for Updates...")
                         .font(.system(size: 13))
                     Spacer()
                 }

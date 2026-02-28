@@ -9,6 +9,7 @@ struct NibbleApp: App {
         Settings {
             PreferencesView()
                 .environmentObject(appDelegate.settings)
+                .environmentObject(appDelegate.updateCoordinator)
         }
     }
 }

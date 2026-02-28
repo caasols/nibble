@@ -11,6 +11,7 @@ Nibble sits quietly in your menubar, watching your ethernet so you don't have to
 - Network interface listing (en0, en1, en6, etc.)
 - Detailed interface information (MAC address, IP addresses, status)
 - "Open at Login" functionality
+- Periodic and manual update checks against official releases
 - Clean, native macOS UI
 - Lightweight and efficient
 
@@ -72,6 +73,12 @@ Once launched, Nibble will appear in your menu bar. Click the icon to:
 - Telemetry remains local in `UserDefaults` as pending unsent events unless you explicitly opt in.
 
 For the internal telemetry governance map, see `docs/telemetry-map.md`.
+
+## Update Checks
+
+- Nibble checks for updates periodically using the official GitHub releases endpoint.
+- You can run an on-demand check from the menu or Preferences.
+- Before opening a download page, Nibble prompts for confirmation and shows release notes.
 
 ## Development
 
