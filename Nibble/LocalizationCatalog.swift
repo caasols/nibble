@@ -29,10 +29,28 @@ enum LocalizationCatalog {
     }
 
     private static func bundle(for localeIdentifier: String) -> Bundle? {
-        guard let path = Bundle.module.path(forResource: localeIdentifier, ofType: "lproj") else {
-            return nil
+        for bundle in candidateBundles() {
+            if let path = bundle.path(forResource: localeIdentifier, ofType: "lproj"),
+               let localizedBundle = Bundle(path: path) {
+                return localizedBundle
+            }
         }
 
-        return Bundle(path: path)
+        return nil
+    }
+
+    private static func candidateBundles() -> [Bundle] {
+        var bundles: [Bundle] = [Bundle.main, Bundle(for: BundleMarker.self)]
+
+        if let resourceURL = Bundle.main.resourceURL {
+            let bundledURL = resourceURL.appendingPathComponent("Nibble_Nibble.bundle")
+            if let bundle = Bundle(url: bundledURL) {
+                bundles.append(bundle)
+            }
+        }
+
+        return bundles
     }
 }
+
+private final class BundleMarker {}

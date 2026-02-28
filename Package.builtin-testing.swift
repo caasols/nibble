@@ -3,6 +3,7 @@ import PackageDescription
 
 let package = Package(
     name: "Nibble",
+    defaultLocalization: "en",
     platforms: [.macOS(.v13)],
     products: [
         .executable(name: "Nibble", targets: ["Nibble"])
@@ -13,7 +14,8 @@ let package = Package(
             name: "Nibble",
             dependencies: [],
             path: "Nibble",
-            exclude: ["Resources"]
+            exclude: ["Resources/Info.plist"],
+            resources: [.process("Resources")]
         ),
         .testTarget(
             name: "NibbleTests",
