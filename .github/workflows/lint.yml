@@ -8,18 +8,36 @@ on:
 jobs:
   swiftlint:
     runs-on: macos-15
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
     steps:
       - uses: actions/checkout@v4
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-homebrew-swiftlint-v1
+          restore-keys: |
+            ${{ runner.os }}-homebrew-
       - name: SwiftLint
         run: |
-          brew install swiftlint
+          command -v swiftlint >/dev/null || brew install swiftlint
           swiftlint lint --reporter github-actions-logging
 
   swiftformat:
     runs-on: macos-15
+    env:
+      HOMEBREW_NO_AUTO_UPDATE: 1
     steps:
       - uses: actions/checkout@v4
+      - name: Cache Homebrew downloads
+        uses: actions/cache@v4
+        with:
+          path: ~/Library/Caches/Homebrew
+          key: ${{ runner.os }}-homebrew-swiftformat-v1
+          restore-keys: |
+            ${{ runner.os }}-homebrew-
       - name: SwiftFormat check
         run: |
-          brew install swiftformat
+          command -v swiftformat >/dev/null || brew install swiftformat
           swiftformat --lint .
