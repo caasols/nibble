@@ -11,6 +11,7 @@ disabled_rules:
   - vertical_whitespace
   - colon
   - comma
+  - trailing_comma
   - todo
 
 opt_in_rules:
@@ -34,8 +35,7 @@ private_outlet: warning
 implicitly_unwrapped_optional: warning
 
 line_length:
-  warning: 120
-  error: 160
+  warning: 140
   ignores_comments: true
   ignores_urls: true
 

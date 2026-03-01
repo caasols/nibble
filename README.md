@@ -146,7 +146,7 @@ make app                  # build app bundle via build.sh
 make release              # swift build -c release
 make release-hygiene-test # run release artifact hygiene tests
 make lint-fix             # auto-fix formatting and lint issues
-make lint                 # run strict lint checks
+make lint                 # run lint checks
 make clean                # remove scratch build path
 ```
 

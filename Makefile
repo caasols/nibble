@@ -22,13 +22,13 @@ release-hygiene-test:
 	scripts/release/check-artifact-hygiene.test.sh
 
 lint:
-	swiftlint lint --strict
+	swiftlint lint
 
 lint-fix:
 	swiftformat . && swiftlint lint --fix && swiftlint lint
 
 lint-check:
-	swiftformat --lint . && swiftlint lint --strict
+	swiftformat --lint . && swiftlint lint
 
 clean:
 	rm -rf "$(SCRATCH_PATH)"

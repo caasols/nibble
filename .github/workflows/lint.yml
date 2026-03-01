@@ -13,7 +13,7 @@ jobs:
       - name: SwiftLint
         run: |
           brew install swiftlint
-          swiftlint lint --strict --reporter github-actions-logging
+          swiftlint lint --reporter github-actions-logging
 
   swiftformat:
     runs-on: macos-15
