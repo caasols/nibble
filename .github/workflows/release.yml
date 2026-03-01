@@ -39,6 +39,23 @@ jobs:
             echo "value=${GITHUB_REF_NAME}" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Validate release tag matches app version
+        env:
+          RELEASE_TAG: ${{ steps.tag.outputs.value }}
+        run: |
+          if [[ ! "${RELEASE_TAG}" =~ ^v[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
+            echo "Release tag must follow v<major>.<minor>.<patch>. Got: ${RELEASE_TAG}"
+            exit 1
+          fi
+
+          TAG_VERSION="${RELEASE_TAG#v}"
+          PLIST_VERSION=$(/usr/libexec/PlistBuddy -c "Print :CFBundleShortVersionString" Nibble/Resources/Info.plist)
+
+          if [[ "${TAG_VERSION}" != "${PLIST_VERSION}" ]]; then
+            echo "Tag version (${TAG_VERSION}) does not match Info.plist version (${PLIST_VERSION})."
+            exit 1
+          fi
+
       - name: Import Developer ID certificate
         env:
           CERT_BASE64: ${{ secrets.APPLE_DEVELOPER_ID_APPLICATION_CERT_BASE64 }}

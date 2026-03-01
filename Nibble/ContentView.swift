@@ -208,6 +208,7 @@ private func copyToClipboard(_ value: String) {
 struct MenuItemsView: View {
     @Binding var showingPreferences: Bool
     @EnvironmentObject var appDelegate: AppDelegate
+    @State private var quickActionsExpanded = false
 
     private func trayMenuButton(_ title: String, action: @escaping () -> Void) -> some View {
         Button(action: action) {
@@ -224,39 +225,45 @@ struct MenuItemsView: View {
     }
 
     private var quickActionsMenu: some View {
-        Menu {
-            Button(LocalizationCatalog.localized("menu.refresh_wifi")) {
-                appDelegate.refreshWiFi()
-            }
-
-            Button(LocalizationCatalog.localized("menu.flush_dns")) {
-                appDelegate.flushDNSCache()
+        Button {
+            withAnimation(.easeInOut(duration: 0.12)) {
+                quickActionsExpanded.toggle()
             }
         } label: {
             HStack {
+                Image(systemName: quickActionsExpanded ? "chevron.down" : "chevron.right")
+                    .font(.system(size: 11, weight: .semibold))
+                    .foregroundColor(.secondary)
+
                 Text(LocalizationCatalog.localized("menu.quick_actions"))
                     .font(.system(size: 13))
                 Spacer()
-                Image(systemName: "chevron.right")
-                    .font(.system(size: 11))
-                    .foregroundColor(.secondary)
             }
             .padding(.horizontal, 16)
             .padding(.vertical, 6)
             .contentShape(Rectangle())
         }
-        .menuStyle(.borderlessButton)
+        .buttonStyle(PlainButtonStyle())
     }
     
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Divider()
-                .padding(.vertical, 8)
+                .padding(.top, 8)
 
             quickActionsMenu
 
+            if quickActionsExpanded {
+                trayMenuButton(LocalizationCatalog.localized("menu.refresh_wifi")) {
+                    appDelegate.refreshWiFi()
+                }
+
+                trayMenuButton(LocalizationCatalog.localized("menu.flush_dns")) {
+                    appDelegate.flushDNSCache()
+                }
+            }
+
             Divider()
-                .padding(.vertical, 8)
 
             trayMenuButton(LocalizationCatalog.localized("menu.preferences")) {
                 showingPreferences = true

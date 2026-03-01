@@ -105,7 +105,7 @@
 "interface.details.status" = "Status";
 "interface.details.ip_addresses" = "IP Addresses";
 
-"about.version" = "Version 0.1.2";
+"about.version" = "Version 0.1.3";
 "about.description" = "An open source menu bar app for monitoring Ethernet connections and network interfaces on macOS.";
 "about.github" = "GitHub Repository";
 "about.report_issue" = "Report an Issue";

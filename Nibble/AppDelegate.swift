@@ -93,8 +93,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
             if popover.isShown {
                 popover.performClose(nil)
             } else {
-                popoverEventMonitor?.start()
                 popover.show(relativeTo: button.bounds, of: button, preferredEdge: NSRectEdge.minY)
+                popoverEventMonitor?.start()
             }
         }
     }
@@ -246,7 +246,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
             return shortVersion
         }
 
-        return "0.1.2"
+        return "0.1.3"
     }
 
     private static func timestampForFilename() -> String {
@@ -254,13 +254,13 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
         formatter.dateFormat = "yyyyMMdd-HHmmss"
         return formatter.string(from: Date())
     }
+
 }
 
 private final class TrayPopoverEventMonitor {
     private let mask: NSEvent.EventTypeMask
     private let handler: () -> Void
     private var globalMonitor: Any?
-    private var localMonitor: Any?
 
     init(mask: NSEvent.EventTypeMask, handler: @escaping () -> Void) {
         self.mask = mask
@@ -273,22 +273,12 @@ private final class TrayPopoverEventMonitor {
         globalMonitor = NSEvent.addGlobalMonitorForEvents(matching: mask) { [weak self] _ in
             self?.handler()
         }
-
-        localMonitor = NSEvent.addLocalMonitorForEvents(matching: mask) { [weak self] event in
-            self?.handler()
-            return event
-        }
     }
 
     func stop() {
         if let globalMonitor {
             NSEvent.removeMonitor(globalMonitor)
             self.globalMonitor = nil
-        }
-
-        if let localMonitor {
-            NSEvent.removeMonitor(localMonitor)
-            self.localMonitor = nil
         }
     }
 
