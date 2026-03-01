@@ -78,7 +78,7 @@ Once launched, Nibble will appear in your menu bar. Click the icon to:
 - Sensitive network identifiers are excluded by default (for example: public IP, private IP, MAC address, SSID, interface name).
 - Telemetry remains local in `UserDefaults` as pending unsent events unless you explicitly opt in.
 
-For the internal telemetry governance map, see `docs/telemetry-map.md`.
+For detailed telemetry governance rules, see `docs/telemetry-map.md`.
 
 ## Update Checks
 

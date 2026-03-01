@@ -247,7 +247,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
             return shortVersion
         }
 
-        return "0.1.3"
+        return "0.1.4"
     }
 
     private static func timestampForFilename() -> String {

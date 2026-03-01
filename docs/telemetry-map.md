@@ -1,4 +1,4 @@
-# Telemetry Data Map (Internal)
+# Telemetry Data Map
 
 This document defines the telemetry governance contract for Nibble.
 
