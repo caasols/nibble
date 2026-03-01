@@ -50,7 +50,7 @@ private final class StubLoginItemManager: LoginItemManaging {
     var shouldFail = false
 
     init(initiallyEnabled: Bool) {
-        self.enabled = initiallyEnabled
+        enabled = initiallyEnabled
     }
 
     func isEnabled() -> Bool {

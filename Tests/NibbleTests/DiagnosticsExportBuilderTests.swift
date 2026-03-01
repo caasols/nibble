@@ -3,7 +3,7 @@ import Testing
 @testable import Nibble
 
 struct DiagnosticsExportBuilderTests {
-    @Test func sanitizedExportExcludesSensitiveIdentifiersByDefault() throws {
+    @Test func sanitizedExportExcludesSensitiveIdentifiersByDefault() {
         let report = DiagnosticsExportBuilder.makeReport(
             appVersion: "1.2.3",
             macOSVersion: "macOS 14.5",
@@ -20,7 +20,7 @@ struct DiagnosticsExportBuilderTests {
                     classificationConfidence: .high,
                     routeRole: .defaultRoute,
                     adapterDescription: "Dock Ethernet"
-                )
+                ),
             ],
             publicIP: "198.51.100.10",
             includeSensitiveIdentifiers: false,
@@ -35,7 +35,7 @@ struct DiagnosticsExportBuilderTests {
         #expect(report.macOSVersion == "macOS 14.5")
     }
 
-    @Test func sensitiveExportIncludesPublicIPAndHardwareIdentifiers() throws {
+    @Test func sensitiveExportIncludesPublicIPAndHardwareIdentifiers() {
         let report = DiagnosticsExportBuilder.makeReport(
             appVersion: "1.2.3",
             macOSVersion: "macOS 14.5",
@@ -52,7 +52,7 @@ struct DiagnosticsExportBuilderTests {
                     classificationConfidence: .high,
                     routeRole: .defaultRoute,
                     adapterDescription: nil
-                )
+                ),
             ],
             publicIP: "203.0.113.99",
             includeSensitiveIdentifiers: true,

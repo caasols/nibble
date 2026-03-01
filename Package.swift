@@ -6,10 +6,10 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.macOS(.v13)],
     products: [
-        .executable(name: "Nibble", targets: ["Nibble"])
+        .executable(name: "Nibble", targets: ["Nibble"]),
     ],
     dependencies: [
-        .package(url: "https://github.com/apple/swift-testing.git", from: "0.6.0")
+        .package(url: "https://github.com/apple/swift-testing.git", from: "0.6.0"),
     ],
     targets: [
         .executableTarget(
@@ -23,8 +23,8 @@ let package = Package(
             name: "NibbleTests",
             dependencies: [
                 "Nibble",
-                .product(name: "Testing", package: "swift-testing")
+                .product(name: "Testing", package: "swift-testing"),
             ]
-        )
+        ),
     ]
 )

@@ -1,0 +1,25 @@
+name: Lint
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  swiftlint:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: SwiftLint
+        run: |
+          brew install swiftlint
+          swiftlint lint --reporter github-actions-logging
+
+  swiftformat:
+    runs-on: macos-15
+    steps:
+      - uses: actions/checkout@v4
+      - name: SwiftFormat check
+        run: |
+          brew install swiftformat
+          swiftformat --lint .

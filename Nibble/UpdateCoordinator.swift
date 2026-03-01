@@ -94,7 +94,7 @@ final class UpdateCoordinator: ObservableObject {
         let currentParts = normalizedVersionParts(current)
         let maxCount = max(candidateParts.count, currentParts.count)
 
-        for index in 0..<maxCount {
+        for index in 0 ..< maxCount {
             let lhs = index < candidateParts.count ? candidateParts[index] : 0
             let rhs = index < currentParts.count ? currentParts[index] : 0
 
@@ -123,7 +123,8 @@ final class UpdateCoordinator: ObservableObject {
 private extension Bundle {
     var nibbleVersion: String {
         if let shortVersion = infoDictionary?["CFBundleShortVersionString"] as? String,
-           !shortVersion.isEmpty {
+           !shortVersion.isEmpty
+        {
             return shortVersion
         }
 

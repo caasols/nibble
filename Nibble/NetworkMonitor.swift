@@ -1,6 +1,6 @@
+import Combine
 import Foundation
 import Network
-import Combine
 
 enum InterfaceRouteRole: Equatable {
     case none
@@ -9,15 +9,18 @@ enum InterfaceRouteRole: Equatable {
     var displayName: String {
         switch self {
         case .none:
-            return LocalizationCatalog.localized("route_role.none")
+            LocalizationCatalog.localized("route_role.none")
         case .defaultRoute:
-            return LocalizationCatalog.localized("route_role.default")
+            LocalizationCatalog.localized("route_role.default")
         }
     }
 }
 
 struct NetworkInterface: Identifiable {
-    var id: String { name }
+    var id: String {
+        name
+    }
+
     let name: String
     let displayName: String
     let hardwareAddress: String?
@@ -61,7 +64,7 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
     @Published var interfaces: [NetworkInterface] = []
     @Published var downloadSpeedBytesPerSecond: Double = 0
     @Published var uploadSpeedBytesPerSecond: Double = 0
-    
+
     private var monitor: NWPathMonitor?
     private var timer: Timer?
     var cancellables = Set<AnyCancellable>()
@@ -92,15 +95,15 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
         self.minimumPathRefreshInterval = minimumPathRefreshInterval
         self.nowProvider = nowProvider
     }
-    
+
     func startMonitoring() {
         // Monitor network path changes
         monitor = NWPathMonitor()
         monitor?.pathUpdateHandler = { [weak self] path in
-            guard let self = self else { return }
-            self.latestPathUsesWiredEthernet = path.usesInterfaceType(.wiredEthernet)
-            if self.shouldProcessPathUpdate(at: self.nowProvider()) {
-                self.refreshNetworkState()
+            guard let self else { return }
+            latestPathUsesWiredEthernet = path.usesInterfaceType(.wiredEthernet)
+            if shouldProcessPathUpdate(at: nowProvider()) {
+                refreshNetworkState()
             }
         }
         monitor?.start(queue: workerQueue)
@@ -117,21 +120,21 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             .removeDuplicates()
             .receive(on: DispatchQueue.main)
             .sink { [weak self] shouldShowPublicIP in
-                guard let self = self else { return }
+                guard let self else { return }
                 if shouldShowPublicIP {
-                    self.fetchPublicIP()
+                    fetchPublicIP()
                 } else {
-                    self.publicIP = nil
+                    publicIP = nil
                 }
             }
             .store(in: &cancellables)
-         
+
         // Fetch public IP
         fetchPublicIP()
-         
+
         // Update interfaces initially
         refreshNetworkState()
-         
+
         // Set up periodic refresh
         scheduleRefreshTimer(with: TimeInterval(settings.refreshInterval))
     }
@@ -144,13 +147,13 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
             self?.refreshCycle()
         }
     }
-    
+
     func stopMonitoring() {
         monitor?.cancel()
         timer?.invalidate()
         cancellables.removeAll()
     }
-    
+
     private func refreshCycle() {
         refreshNetworkState()
         fetchPublicIP()
@@ -158,7 +161,8 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
 
     func shouldProcessPathUpdate(at now: Date) -> Bool {
         if let lastPathRefreshAt,
-           now.timeIntervalSince(lastPathRefreshAt) < minimumPathRefreshInterval {
+           now.timeIntervalSince(lastPathRefreshAt) < minimumPathRefreshInterval
+        {
             return false
         }
 
@@ -168,12 +172,12 @@ final class NetworkMonitor: ObservableObject, @unchecked Sendable {
 
     private func refreshNetworkState() {
         workerQueue.async { [weak self] in
-            guard let self = self else { return }
+            guard let self else { return }
 
-            let snapshot = self.orchestrator.snapshot(pathUsesWiredEthernet: self.latestPathUsesWiredEthernet)
-            let speedReading = self.speedSampler.nextSpeed(
-                using: self.trafficSnapshotProvider.currentSnapshot(),
-                at: self.nowProvider()
+            let snapshot = orchestrator.snapshot(pathUsesWiredEthernet: latestPathUsesWiredEthernet)
+            let speedReading = speedSampler.nextSpeed(
+                using: trafficSnapshotProvider.currentSnapshot(),
+                at: nowProvider()
             )
             DispatchQueue.main.async {
                 self.interfaces = snapshot.visibleInterfaces

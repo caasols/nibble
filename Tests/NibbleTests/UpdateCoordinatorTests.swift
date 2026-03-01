@@ -4,17 +4,17 @@ import Testing
 
 @MainActor
 struct UpdateCoordinatorTests {
-    @Test func manualCheckPublishesUpdateWhenReleaseIsNewer() async {
+    @Test func manualCheckPublishesUpdateWhenReleaseIsNewer() async throws {
         let suite = "UpdateCoordinatorTests.manual.newer"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
-        let checker = StubUpdateChecker(
+        let checker = try StubUpdateChecker(
             result: .success(
                 AppRelease(
                     version: "1.1.0",
                     notes: "Bug fixes.",
-                    downloadURL: URL(string: "https://github.com/caasols/nibble/releases/tag/v1.1.0")!
+                    downloadURL: #require(URL(string: "https://github.com/caasols/nibble/releases/tag/v1.1.0"))
                 )
             )
         )
@@ -32,9 +32,9 @@ struct UpdateCoordinatorTests {
         #expect(await checker.callCount == 1)
     }
 
-    @Test func periodicCheckSkipsNetworkWhenIntervalHasNotElapsed() async {
+    @Test func periodicCheckSkipsNetworkWhenIntervalHasNotElapsed() async throws {
         let suite = "UpdateCoordinatorTests.periodic.skip"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
         defaults.set(Date(timeIntervalSince1970: 1_700_000_000), forKey: "lastUpdateCheckDate")
 
@@ -52,17 +52,17 @@ struct UpdateCoordinatorTests {
         #expect(coordinator.statusMessage == "Last checked recently.")
     }
 
-    @Test func dismissingPromptClearsPendingRelease() async {
+    @Test func dismissingPromptClearsPendingRelease() async throws {
         let suite = "UpdateCoordinatorTests.dismiss"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
-        let checker = StubUpdateChecker(
+        let checker = try StubUpdateChecker(
             result: .success(
                 AppRelease(
                     version: "1.1.0",
                     notes: "Bug fixes.",
-                    downloadURL: URL(string: "https://github.com/caasols/nibble/releases/tag/v1.1.0")!
+                    downloadURL: #require(URL(string: "https://github.com/caasols/nibble/releases/tag/v1.1.0"))
                 )
             )
         )
@@ -80,17 +80,17 @@ struct UpdateCoordinatorTests {
         #expect(coordinator.updatePromptRelease == nil)
     }
 
-    @Test func manualCheckDoesNotPromptWhenVersionIsCurrent() async {
+    @Test func manualCheckDoesNotPromptWhenVersionIsCurrent() async throws {
         let suite = "UpdateCoordinatorTests.manual.current"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
-        let checker = StubUpdateChecker(
+        let checker = try StubUpdateChecker(
             result: .success(
                 AppRelease(
                     version: "1.0.0",
                     notes: "No changes.",
-                    downloadURL: URL(string: "https://github.com/caasols/nibble/releases/tag/v1.0.0")!
+                    downloadURL: #require(URL(string: "https://github.com/caasols/nibble/releases/tag/v1.0.0"))
                 )
             )
         )
@@ -107,9 +107,9 @@ struct UpdateCoordinatorTests {
         #expect(coordinator.statusMessage == "You're up to date.")
     }
 
-    @Test func failedCheckPersistsLastAttemptDate() async {
+    @Test func failedCheckPersistsLastAttemptDate() async throws {
         let suite = "UpdateCoordinatorTests.failureTimestamp"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
         let checker = StubUpdateChecker(result: .failure(StubError()))

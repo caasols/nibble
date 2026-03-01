@@ -3,9 +3,9 @@ import Testing
 @testable import Nibble
 
 struct UserDefaultsTelemetryQueueStoreTests {
-    @Test func enqueuePersistsPendingEventCount() {
+    @Test func enqueuePersistsPendingEventCount() throws {
         let suite = "UserDefaultsTelemetryQueueStoreTests.enqueue"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
         let store = UserDefaultsTelemetryQueueStore(userDefaults: defaults)
@@ -17,9 +17,9 @@ struct UserDefaultsTelemetryQueueStoreTests {
         #expect(reloaded.pendingEventCount == 1)
     }
 
-    @Test func clearPendingEventsRemovesAllQueuedData() {
+    @Test func clearPendingEventsRemovesAllQueuedData() throws {
         let suite = "UserDefaultsTelemetryQueueStoreTests.clear"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
         let store = UserDefaultsTelemetryQueueStore(userDefaults: defaults)
@@ -32,9 +32,9 @@ struct UserDefaultsTelemetryQueueStoreTests {
         #expect(store.pendingEventCount == 0)
     }
 
-    @Test func enqueueDropsSensitiveAndUnknownPayloadFields() {
+    @Test func enqueueDropsSensitiveAndUnknownPayloadFields() throws {
         let suite = "UserDefaultsTelemetryQueueStoreTests.sensitiveFilter"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
         let store = UserDefaultsTelemetryQueueStore(userDefaults: defaults)
@@ -42,7 +42,7 @@ struct UserDefaultsTelemetryQueueStoreTests {
             "enabled": "false",
             "public_ip": "198.51.100.5",
             "mac_address": "AA:BB:CC:DD:EE:FF",
-            "debug_note": "ignore"
+            "debug_note": "ignore",
         ])
 
         let events = defaults.array(forKey: "telemetryPendingEvents") as? [[String: String]]
@@ -53,9 +53,9 @@ struct UserDefaultsTelemetryQueueStoreTests {
         #expect(events?.first?["payload.debug_note"] == nil)
     }
 
-    @Test func enqueueRejectsUnknownEventName() {
+    @Test func enqueueRejectsUnknownEventName() throws {
         let suite = "UserDefaultsTelemetryQueueStoreTests.eventAllowList"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
         let store = UserDefaultsTelemetryQueueStore(userDefaults: defaults)

@@ -1,7 +1,7 @@
-import SwiftUI
-import Network
-import SystemConfiguration
 import Combine
+import Network
+import SwiftUI
+import SystemConfiguration
 import UniformTypeIdentifiers
 
 @MainActor
@@ -16,27 +16,27 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
     private let wiFiRefreshService: WiFiRefreshService
     private var popoverEventMonitor: TrayPopoverEventMonitor?
     private var cancellables = Set<AnyCancellable>()
-    
+
     override init() {
-        self.settings = AppSettings()
-        self.loginItemController = LoginItemController()
-        self.updateCoordinator = UpdateCoordinator()
-        self.networkMonitor = NetworkMonitor(settings: settings)
-        self.dnsFlushService = DNSFlushService()
-        self.wiFiRefreshService = WiFiRefreshService(cooldown: 0)
+        settings = AppSettings()
+        loginItemController = LoginItemController()
+        updateCoordinator = UpdateCoordinator()
+        networkMonitor = NetworkMonitor(settings: settings)
+        dnsFlushService = DNSFlushService()
+        wiFiRefreshService = WiFiRefreshService(cooldown: 0)
         super.init()
     }
-    
-    func applicationDidFinishLaunching(_ notification: Notification) {
+
+    func applicationDidFinishLaunching(_: Notification) {
         // Create the status bar item
         statusBarItem = NSStatusBar.system.statusItem(withLength: NSStatusItem.variableLength)
-        
+
         if let button = statusBarItem.button {
             updateMenuBarButton(button, for: networkMonitor.connectionState)
             button.action = #selector(togglePopover)
             button.target = self
         }
-        
+
         // Create the popover
         popover = NSPopover()
         popover.contentSize = NSSize(width: 300, height: 400)
@@ -52,7 +52,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
         popoverEventMonitor = TrayPopoverEventMonitor(mask: [.leftMouseDown, .rightMouseDown]) { [weak self] in
             self?.popover.performClose(nil)
         }
-        
+
         // Setup network monitoring
         networkMonitor.startMonitoring()
 
@@ -66,7 +66,7 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
                 self?.applyActivationPolicy(appMode: appMode)
             }
             .store(in: &cancellables)
-         
+
         // Update menu bar icon based on connection status
         updateMenuBarIcon()
 
@@ -83,11 +83,11 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
         }
     }
 
-    func applicationWillTerminate(_ notification: Notification) {
+    func applicationWillTerminate(_: Notification) {
         networkMonitor.stopMonitoring()
         cancellables.removeAll()
     }
-    
+
     @objc func togglePopover() {
         if let button = statusBarItem.button {
             if popover.isShown {
@@ -99,10 +99,10 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
         }
     }
 
-    func popoverDidClose(_ notification: Notification) {
+    func popoverDidClose(_: Notification) {
         popoverEventMonitor?.stop()
     }
-    
+
     func updateMenuBarIcon() {
         networkMonitor.$connectionState
             .receive(on: DispatchQueue.main)
@@ -242,7 +242,8 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
 
     private static func appVersionString() -> String {
         if let shortVersion = Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String,
-           !shortVersion.isEmpty {
+           !shortVersion.isEmpty
+        {
             return shortVersion
         }
 
@@ -254,7 +255,6 @@ class AppDelegate: NSObject, NSApplicationDelegate, ObservableObject, NSPopoverD
         formatter.dateFormat = "yyyyMMdd-HHmmss"
         return formatter.string(from: Date())
     }
-
 }
 
 private final class TrayPopoverEventMonitor {

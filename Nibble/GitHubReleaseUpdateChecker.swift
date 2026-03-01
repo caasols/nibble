@@ -20,7 +20,8 @@ struct GitHubReleaseUpdateChecker: AppUpdateChecking {
 
         let (data, response) = try await session.data(for: request)
         guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode) else {
+              (200 ... 299).contains(httpResponse.statusCode)
+        else {
             throw URLError(.badServerResponse)
         }
 

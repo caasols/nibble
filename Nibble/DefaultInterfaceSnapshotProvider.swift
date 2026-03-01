@@ -62,12 +62,19 @@ final class DefaultInterfaceSnapshotProvider: InterfaceSnapshotProviding {
             if let dlAddr = interface.ifa_addr {
                 dlAddr.withMemoryRebound(to: sockaddr_dl.self, capacity: 1) { dlData in
                     let sdl = dlData.pointee
-                    if sdl.sdl_family == UInt8(AF_LINK) && sdl.sdl_alen == 6 {
+                    if sdl.sdl_family == UInt8(AF_LINK), sdl.sdl_alen == 6 {
                         let bytes = dlData.withMemoryRebound(to: UInt8.self, capacity: 1) { ptr in
                             ptr.advanced(by: MemoryLayout<sockaddr_dl>.offset(of: \sockaddr_dl.sdl_data)!).advanced(by: Int(sdl.sdl_nlen))
                         }
-                        hardwareAddress = String(format: "%02x:%02x:%02x:%02x:%02x:%02x",
-                            bytes[0], bytes[1], bytes[2], bytes[3], bytes[4], bytes[5])
+                        hardwareAddress = String(
+                            format: "%02x:%02x:%02x:%02x:%02x:%02x",
+                            bytes[0],
+                            bytes[1],
+                            bytes[2],
+                            bytes[3],
+                            bytes[4],
+                            bytes[5]
+                        )
                     }
                 }
             }

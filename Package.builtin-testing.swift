@@ -6,7 +6,7 @@ let package = Package(
     defaultLocalization: "en",
     platforms: [.macOS(.v13)],
     products: [
-        .executable(name: "Nibble", targets: ["Nibble"])
+        .executable(name: "Nibble", targets: ["Nibble"]),
     ],
     dependencies: [],
     targets: [
@@ -20,6 +20,6 @@ let package = Package(
         .testTarget(
             name: "NibbleTests",
             dependencies: ["Nibble"]
-        )
+        ),
     ]
 )

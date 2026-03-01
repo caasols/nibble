@@ -1,5 +1,5 @@
-import Foundation
 import Combine
+import Foundation
 
 final class AppSettings: ObservableObject {
     enum AppMode: String {
@@ -64,13 +64,13 @@ final class AppSettings: ObservableObject {
         self.userDefaults = userDefaults
         let resolvedTelemetryStore = telemetryStore ?? UserDefaultsTelemetryQueueStore(userDefaults: userDefaults)
         self.telemetryStore = resolvedTelemetryStore
-        self.refreshInterval = Self.normalizedRefreshInterval(
+        refreshInterval = Self.normalizedRefreshInterval(
             Self.integer(forKey: Keys.refreshInterval, defaultValue: 30, in: userDefaults)
         )
-        self.showPublicIP = Self.bool(forKey: Keys.showPublicIP, defaultValue: true, in: userDefaults)
-        self.appMode = Self.appMode(in: userDefaults)
-        self.telemetryEnabled = Self.bool(forKey: Keys.telemetryEnabled, defaultValue: false, in: userDefaults)
-        self.pendingTelemetryEventCount = resolvedTelemetryStore.pendingEventCount
+        showPublicIP = Self.bool(forKey: Keys.showPublicIP, defaultValue: true, in: userDefaults)
+        appMode = Self.appMode(in: userDefaults)
+        telemetryEnabled = Self.bool(forKey: Keys.telemetryEnabled, defaultValue: false, in: userDefaults)
+        pendingTelemetryEventCount = resolvedTelemetryStore.pendingEventCount
     }
 
     func erasePendingTelemetryData() {
@@ -102,7 +102,8 @@ final class AppSettings: ObservableObject {
 
     private static func appMode(in defaults: UserDefaults) -> AppMode {
         if let storedMode = defaults.string(forKey: Keys.appMode),
-           let appMode = AppMode(rawValue: storedMode) {
+           let appMode = AppMode(rawValue: storedMode)
+        {
             return appMode
         }
 

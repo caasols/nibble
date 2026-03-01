@@ -27,7 +27,8 @@ final class DefaultNetworkTrafficSnapshotProvider: NetworkTrafficSnapshotProvidi
                   !name.hasPrefix("lo"),
                   let address = interface.ifa_addr,
                   address.pointee.sa_family == UInt8(AF_LINK),
-                  let data = interface.ifa_data else {
+                  let data = interface.ifa_data
+            else {
                 pointer = interface.ifa_next
                 continue
             }

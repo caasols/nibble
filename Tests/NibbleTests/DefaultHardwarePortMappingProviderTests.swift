@@ -9,7 +9,7 @@ struct DefaultHardwarePortMappingProviderTests {
             """
             Hardware Port: Wi-Fi
             Device: en0
-            """
+            """,
         ])
 
         let provider = DefaultHardwarePortMappingProvider(
@@ -35,7 +35,7 @@ struct DefaultHardwarePortMappingProviderTests {
             """
             Hardware Port: Ethernet
             Device: en1
-            """
+            """,
         ])
 
         let provider = DefaultHardwarePortMappingProvider(
@@ -66,7 +66,7 @@ struct DefaultHardwarePortMappingProviderTests {
             Hardware Port: Wi-Fi
             Device: en0
             """,
-            nil
+            nil,
         ])
 
         let provider = DefaultHardwarePortMappingProvider(

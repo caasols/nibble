@@ -3,8 +3,8 @@ import Testing
 @testable import Nibble
 
 struct NetworkMonitorPathThrottleTests {
-    @Test func pathUpdatesAreThrottledWithinMinimumInterval() {
-        let settings = AppSettings(userDefaults: UserDefaults(suiteName: "NetworkMonitorPathThrottleTests.throttle")!)
+    @Test func pathUpdatesAreThrottledWithinMinimumInterval() throws {
+        let settings = try AppSettings(userDefaults: #require(UserDefaults(suiteName: "NetworkMonitorPathThrottleTests.throttle")))
         let monitor = NetworkMonitor(
             settings: settings,
             orchestrator: NetworkMonitorOrchestrator(
@@ -22,7 +22,7 @@ struct NetworkMonitorPathThrottleTests {
 }
 
 private final class StubInterfaceProvider: InterfaceSnapshotProviding {
-    func snapshot(pathUsesWiredEthernet: Bool) -> InterfaceSnapshot {
+    func snapshot(pathUsesWiredEthernet _: Bool) -> InterfaceSnapshot {
         InterfaceSnapshot(allInterfaces: [], visibleInterfaces: [], connectionState: .disconnected)
     }
 }

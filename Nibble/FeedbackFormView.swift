@@ -1,5 +1,5 @@
-import SwiftUI
 import AppKit
+import SwiftUI
 
 struct FeedbackFormView: View {
     @Environment(\.dismiss) private var dismiss

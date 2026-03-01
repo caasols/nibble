@@ -10,6 +10,25 @@ swift build
 swift test
 ```
 
+## Code Style
+
+Nibble uses two lint tools that run automatically on pull requests.
+
+| Tool | Job |
+|---|---|
+| SwiftFormat | Formatting (indentation, spacing, wrapping) |
+| SwiftLint | Safety and code quality rules |
+
+Before pushing, run:
+
+```bash
+make lint-fix
+make lint
+```
+
+PRs with lint errors should not be merged.
+If a rule produces a false positive, suppress it inline and explain the rationale in the PR description.
+
 ## CI Lanes
 
 GitHub Actions defines two lanes in `.github/workflows/ci.yml`:
@@ -18,6 +37,8 @@ GitHub Actions defines two lanes in `.github/workflows/ci.yml`:
 - `builtin-testing-probe` (non-blocking): swaps to `Package.builtin-testing.swift` to track readiness for removing the temporary `swift-testing` dependency.
 
 For branch protection verification, open a PR to `main` and confirm only `stable-build-and-test` is required.
+
+Linting automation is defined in `.github/workflows/lint.yml` with separate `swiftlint` and `swiftformat` jobs so style/safety failures are diagnosed independently from build/test failures.
 
 ## Release Lane
 

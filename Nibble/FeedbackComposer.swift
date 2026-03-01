@@ -13,16 +13,18 @@ enum FeedbackCategory: String, CaseIterable, Identifiable {
     case feature
     case general
 
-    var id: String { rawValue }
+    var id: String {
+        rawValue
+    }
 
     var title: String {
         switch self {
         case .bug:
-            return "Bug"
+            "Bug"
         case .feature:
-            return "Feature Request"
+            "Feature Request"
         case .general:
-            return "General Feedback"
+            "General Feedback"
         }
     }
 }
@@ -69,7 +71,7 @@ final class FeedbackComposer: ObservableObject {
 
     var canSubmit: Bool {
         !subject.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty &&
-        !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+            !message.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
     }
 
     func submissionPayload() -> FeedbackSubmissionPayload? {
@@ -120,7 +122,7 @@ final class FeedbackComposer: ObservableObject {
             category.title,
             "",
             "## Details",
-            message.trimmingCharacters(in: .whitespacesAndNewlines)
+            message.trimmingCharacters(in: .whitespacesAndNewlines),
         ]
 
         if !contact.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty {

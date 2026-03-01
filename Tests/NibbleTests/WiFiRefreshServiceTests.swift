@@ -18,7 +18,7 @@ struct WiFiRefreshServiceTests {
         #expect(runner.executedCommands == [
             ["/usr/sbin/networksetup", "-listallhardwareports"],
             ["/usr/sbin/networksetup", "-setairportpower", "en0", "off"],
-            ["/usr/sbin/networksetup", "-setairportpower", "en0", "on"]
+            ["/usr/sbin/networksetup", "-setairportpower", "en0", "on"],
         ])
     }
 

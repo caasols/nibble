@@ -3,8 +3,8 @@ import Testing
 @testable import Nibble
 
 struct AppSettingsTests {
-    @Test func defaultsAreAppliedWhenNoValuesExist() {
-        let defaults = UserDefaults(suiteName: "AppSettingsTests.defaults")!
+    @Test func defaultsAreAppliedWhenNoValuesExist() throws {
+        let defaults = try #require(UserDefaults(suiteName: "AppSettingsTests.defaults"))
         defaults.removePersistentDomain(forName: "AppSettingsTests.defaults")
 
         let settings = AppSettings(userDefaults: defaults)
@@ -16,8 +16,8 @@ struct AppSettingsTests {
         #expect(settings.pendingTelemetryEventCount == 0)
     }
 
-    @Test func refreshIntervalIsNormalizedToAllowedRangeAndStep() {
-        let defaults = UserDefaults(suiteName: "AppSettingsTests.normalize")!
+    @Test func refreshIntervalIsNormalizedToAllowedRangeAndStep() throws {
+        let defaults = try #require(UserDefaults(suiteName: "AppSettingsTests.normalize"))
         defaults.removePersistentDomain(forName: "AppSettingsTests.normalize")
 
         let settings = AppSettings(userDefaults: defaults)
@@ -31,9 +31,9 @@ struct AppSettingsTests {
         #expect(settings.refreshInterval == 40)
     }
 
-    @Test func persistedValuesAreReloaded() {
+    @Test func persistedValuesAreReloaded() throws {
         let suite = "AppSettingsTests.persisted"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
 
         var settings = AppSettings(userDefaults: defaults)
@@ -51,9 +51,9 @@ struct AppSettingsTests {
         #expect(settings.telemetryEnabled)
     }
 
-    @Test func appModeFallsBackToLegacyStartHiddenPreference() {
+    @Test func appModeFallsBackToLegacyStartHiddenPreference() throws {
         let suite = "AppSettingsTests.legacyStartHidden"
-        let defaults = UserDefaults(suiteName: suite)!
+        let defaults = try #require(UserDefaults(suiteName: suite))
         defaults.removePersistentDomain(forName: suite)
         defaults.set(true, forKey: "startHidden")
 
@@ -62,8 +62,8 @@ struct AppSettingsTests {
         #expect(settings.appMode == .menuBarOnly)
     }
 
-    @Test func publicIPTransparencySummaryIncludesProviderAndRefreshCadenceWhenEnabled() {
-        let defaults = UserDefaults(suiteName: "AppSettingsTests.publicIPTransparency.enabled")!
+    @Test func publicIPTransparencySummaryIncludesProviderAndRefreshCadenceWhenEnabled() throws {
+        let defaults = try #require(UserDefaults(suiteName: "AppSettingsTests.publicIPTransparency.enabled"))
         defaults.removePersistentDomain(forName: "AppSettingsTests.publicIPTransparency.enabled")
 
         let settings = AppSettings(userDefaults: defaults)
@@ -74,8 +74,8 @@ struct AppSettingsTests {
         #expect(settings.publicIPTransparencySummary == "Nibble requests your public IP from api.ipify.org at launch, when enabled, and every 120 seconds during refresh. Turn this off to stop public IP requests.")
     }
 
-    @Test func publicIPTransparencySummaryStatesNoRequestsWhenDisabled() {
-        let defaults = UserDefaults(suiteName: "AppSettingsTests.publicIPTransparency.disabled")!
+    @Test func publicIPTransparencySummaryStatesNoRequestsWhenDisabled() throws {
+        let defaults = try #require(UserDefaults(suiteName: "AppSettingsTests.publicIPTransparency.disabled"))
         defaults.removePersistentDomain(forName: "AppSettingsTests.publicIPTransparency.disabled")
 
         let settings = AppSettings(userDefaults: defaults)
@@ -84,8 +84,8 @@ struct AppSettingsTests {
         #expect(settings.publicIPTransparencySummary == "Public IP lookups are off. Nibble does not request your public IP unless you enable this setting.")
     }
 
-    @Test func erasePendingTelemetryDataClearsStoredQueueCount() {
-        let defaults = UserDefaults(suiteName: "AppSettingsTests.telemetryClear")!
+    @Test func erasePendingTelemetryDataClearsStoredQueueCount() throws {
+        let defaults = try #require(UserDefaults(suiteName: "AppSettingsTests.telemetryClear"))
         defaults.removePersistentDomain(forName: "AppSettingsTests.telemetryClear")
 
         let telemetryStore = UserDefaultsTelemetryQueueStore(userDefaults: defaults)

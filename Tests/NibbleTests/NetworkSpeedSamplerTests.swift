@@ -7,7 +7,7 @@ struct NetworkSpeedSamplerTests {
         var sampler = NetworkSpeedSampler()
 
         let reading = sampler.nextSpeed(
-            using: NetworkTrafficSnapshot(receivedBytes: 10_000, sentBytes: 4_000),
+            using: NetworkTrafficSnapshot(receivedBytes: 10000, sentBytes: 4000),
             at: Date(timeIntervalSince1970: 100)
         )
 
@@ -19,16 +19,16 @@ struct NetworkSpeedSamplerTests {
         var sampler = NetworkSpeedSampler()
 
         _ = sampler.nextSpeed(
-            using: NetworkTrafficSnapshot(receivedBytes: 20_000, sentBytes: 8_000),
+            using: NetworkTrafficSnapshot(receivedBytes: 20000, sentBytes: 8000),
             at: Date(timeIntervalSince1970: 100)
         )
 
         let reading = sampler.nextSpeed(
-            using: NetworkTrafficSnapshot(receivedBytes: 23_000, sentBytes: 9_500),
+            using: NetworkTrafficSnapshot(receivedBytes: 23000, sentBytes: 9500),
             at: Date(timeIntervalSince1970: 103)
         )
 
-        #expect(reading.downloadBytesPerSecond == 1_000)
+        #expect(reading.downloadBytesPerSecond == 1000)
         #expect(reading.uploadBytesPerSecond == 500)
     }
 
@@ -36,12 +36,12 @@ struct NetworkSpeedSamplerTests {
         var sampler = NetworkSpeedSampler()
 
         _ = sampler.nextSpeed(
-            using: NetworkTrafficSnapshot(receivedBytes: 100_000, sentBytes: 60_000),
+            using: NetworkTrafficSnapshot(receivedBytes: 100_000, sentBytes: 60000),
             at: Date(timeIntervalSince1970: 200)
         )
 
         let reading = sampler.nextSpeed(
-            using: NetworkTrafficSnapshot(receivedBytes: 2_000, sentBytes: 1_000),
+            using: NetworkTrafficSnapshot(receivedBytes: 2000, sentBytes: 1000),
             at: Date(timeIntervalSince1970: 201)
         )
 

@@ -7,7 +7,7 @@ struct NetworkSpeedFormatterTests {
     }
 
     @Test func formatsKilobytesPerSecond() {
-        #expect(NetworkSpeedFormatter.string(bytesPerSecond: 1_536) == "1.5 KB/s")
+        #expect(NetworkSpeedFormatter.string(bytesPerSecond: 1536) == "1.5 KB/s")
     }
 
     @Test func formatsMegabytesPerSecond() {

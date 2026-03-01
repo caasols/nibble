@@ -2,7 +2,7 @@ import Testing
 @testable import Nibble
 
 struct InterfaceSnapshotBuilderTests {
-    @Test func buildMergesDuplicateInterfaceObservationsDeterministically() {
+    @Test func buildMergesDuplicateInterfaceObservationsDeterministically() throws {
         let observations = [
             InterfaceObservation(
                 name: "en5",
@@ -23,7 +23,7 @@ struct InterfaceSnapshotBuilderTests {
                 medium: .wired,
                 classificationConfidence: .high,
                 adapterDescription: "USB-C 2.5G Ethernet"
-            )
+            ),
         ]
 
         let snapshot = InterfaceSnapshotBuilder.build(
@@ -33,7 +33,7 @@ struct InterfaceSnapshotBuilderTests {
 
         #expect(snapshot.allInterfaces.count == 1)
 
-        let interface = try! #require(snapshot.allInterfaces.first)
+        let interface = try #require(snapshot.allInterfaces.first)
         #expect(interface.name == "en5")
         #expect(interface.isActive)
         #expect(interface.hardwareAddress == "aa:bb:cc:dd:ee:ff")
@@ -48,7 +48,7 @@ struct InterfaceSnapshotBuilderTests {
             InterfaceObservation(name: "lo0", displayName: "Loopback", hardwareAddress: nil, isActive: true, addresses: ["127.0.0.1"], medium: .loopback, classificationConfidence: .high),
             InterfaceObservation(name: "awdl0", displayName: "AWDL", hardwareAddress: nil, isActive: true, addresses: [], medium: .awdl, classificationConfidence: .high),
             InterfaceObservation(name: "utun1", displayName: "VPN", hardwareAddress: nil, isActive: true, addresses: [], medium: .vpn, classificationConfidence: .high),
-            InterfaceObservation(name: "en5", displayName: "Dock LAN", hardwareAddress: nil, isActive: true, addresses: ["10.0.0.20"], medium: .wired, classificationConfidence: .high)
+            InterfaceObservation(name: "en5", displayName: "Dock LAN", hardwareAddress: nil, isActive: true, addresses: ["10.0.0.20"], medium: .wired, classificationConfidence: .high),
         ]
 
         let snapshot = InterfaceSnapshotBuilder.build(
@@ -64,7 +64,7 @@ struct InterfaceSnapshotBuilderTests {
     @Test func buildMarksDefaultRouteInterfaceRole() {
         let observations = [
             InterfaceObservation(name: "en0", displayName: "Wi-Fi", hardwareAddress: nil, isActive: true, addresses: ["192.168.1.2"], medium: .wiFi, classificationConfidence: .high),
-            InterfaceObservation(name: "en5", displayName: "Ethernet", hardwareAddress: nil, isActive: true, addresses: ["10.0.0.20"], medium: .wired, classificationConfidence: .high)
+            InterfaceObservation(name: "en5", displayName: "Ethernet", hardwareAddress: nil, isActive: true, addresses: ["10.0.0.20"], medium: .wired, classificationConfidence: .high),
         ]
 
         let snapshot = InterfaceSnapshotBuilder.build(

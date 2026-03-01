@@ -5,10 +5,10 @@ struct NetworkMonitorOrchestratorTests {
     @Test func returnsSnapshotFromInterfaceProvider() {
         let expected = InterfaceSnapshot(
             allInterfaces: [
-                NetworkInterface(name: "en5", displayName: "Ethernet", hardwareAddress: nil, isActive: true, addresses: ["192.168.1.20"], type: "Ethernet", medium: .wired, classificationConfidence: .high)
+                NetworkInterface(name: "en5", displayName: "Ethernet", hardwareAddress: nil, isActive: true, addresses: ["192.168.1.20"], type: "Ethernet", medium: .wired, classificationConfidence: .high),
             ],
             visibleInterfaces: [
-                NetworkInterface(name: "en5", displayName: "Ethernet", hardwareAddress: nil, isActive: true, addresses: ["192.168.1.20"], type: "Ethernet", medium: .wired, classificationConfidence: .high)
+                NetworkInterface(name: "en5", displayName: "Ethernet", hardwareAddress: nil, isActive: true, addresses: ["192.168.1.20"], type: "Ethernet", medium: .wired, classificationConfidence: .high),
             ],
             connectionState: .active
         )
@@ -48,7 +48,7 @@ private final class FakeInterfaceSnapshotProvider: InterfaceSnapshotProviding {
     let stubbedSnapshot: InterfaceSnapshot
 
     init(snapshot: InterfaceSnapshot) {
-        self.stubbedSnapshot = snapshot
+        stubbedSnapshot = snapshot
     }
 
     func snapshot(pathUsesWiredEthernet: Bool) -> InterfaceSnapshot {

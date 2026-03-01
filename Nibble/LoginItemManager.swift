@@ -35,8 +35,8 @@ final class LoginItemController: ObservableObject {
 
     init(manager: LoginItemManaging = LoginItemManager()) {
         self.manager = manager
-        self.isOpenAtLogin = manager.isEnabled()
-        self.lastErrorMessage = nil
+        isOpenAtLogin = manager.isEnabled()
+        lastErrorMessage = nil
     }
 
     func refreshFromSystem() {

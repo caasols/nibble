@@ -32,7 +32,7 @@ enum HardwarePortMapper {
             return "Wi-Fi"
         }
 
-        if portLower.contains("thunderbolt") && portLower.contains("ethernet") {
+        if portLower.contains("thunderbolt"), portLower.contains("ethernet") {
             return "Ethernet"
         }
 

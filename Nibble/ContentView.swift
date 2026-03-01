@@ -1,5 +1,5 @@
-import SwiftUI
 import AppKit
+import SwiftUI
 
 private enum PopoverStyle {
     static let panelWidth: CGFloat = 280
@@ -18,20 +18,20 @@ struct ContentView: View {
     @EnvironmentObject var appDelegate: AppDelegate
     @EnvironmentObject var updateCoordinator: UpdateCoordinator
     @State private var showingPreferences = false
-    
+
     var body: some View {
         VStack(spacing: 0) {
             ConnectionStatusView()
                 .padding(.top, 16)
-            
+
             Divider()
                 .padding(.vertical, PopoverStyle.sectionGap)
-            
+
             InterfacesSection()
-            
+
             Divider()
                 .padding(.vertical, PopoverStyle.sectionGap)
-            
+
             MenuItemsView(showingPreferences: $showingPreferences)
                 .padding(.bottom, 8)
         }
@@ -82,25 +82,25 @@ struct ConnectionStatusView: View {
     private var statusText: String {
         switch networkMonitor.connectionState {
         case .active:
-            return LocalizationCatalog.localized("status.connected_active")
+            LocalizationCatalog.localized("status.connected_active")
         case .inactive:
-            return LocalizationCatalog.localized("status.connected_inactive")
+            LocalizationCatalog.localized("status.connected_inactive")
         case .disconnected:
-            return LocalizationCatalog.localized("status.disconnected")
+            LocalizationCatalog.localized("status.disconnected")
         }
     }
 
     private var statusColor: Color {
         switch networkMonitor.connectionState {
         case .active:
-            return .green
+            .green
         case .inactive:
-            return .orange
+            .orange
         case .disconnected:
-            return .red
+            .red
         }
     }
-    
+
     var body: some View {
         VStack(spacing: 8) {
             HStack {
@@ -122,7 +122,7 @@ struct ConnectionStatusView: View {
                 Spacer()
             }
             .padding(.horizontal, PopoverStyle.horizontalPadding)
-              
+
             if settings.showPublicIP {
                 HStack {
                     Text(LocalizationCatalog.localized("public_ip.label"))
@@ -163,7 +163,7 @@ struct ConnectionStatusView: View {
 
 struct InterfacesSection: View {
     @EnvironmentObject var networkMonitor: NetworkMonitor
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             Text(LocalizationCatalog.localized("interfaces.title"))
@@ -171,7 +171,7 @@ struct InterfacesSection: View {
                 .foregroundColor(.secondary)
                 .padding(.horizontal, PopoverStyle.horizontalPadding)
                 .padding(.bottom, 4)
-            
+
             ForEach(networkMonitor.interfaces) { interface in
                 InterfaceRow(interface: interface)
             }
@@ -182,7 +182,7 @@ struct InterfacesSection: View {
 struct InterfaceRow: View {
     let interface: NetworkInterface
     @State private var showingDetails = false
-    
+
     var body: some View {
         Button(action: {
             showingDetails = true
@@ -255,7 +255,7 @@ struct MenuItemsView: View {
         }
         .buttonStyle(PlainButtonStyle())
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 0) {
             quickActionsMenu

@@ -135,6 +135,23 @@ Or build from command line:
 swift build
 ```
 
+### Developer Shortcuts
+
+Nibble includes a `Makefile` with convenience commands for common local tasks:
+
+```bash
+make build                # swift build with shared scratch path
+make run                  # swift run Nibble
+make app                  # build app bundle via build.sh
+make release              # swift build -c release
+make release-hygiene-test # run release artifact hygiene tests
+make lint-fix             # auto-fix formatting and lint issues
+make lint                 # run lint checks
+make clean                # remove scratch build path
+```
+
+These commands are optional shortcuts around the same underlying Swift/build scripts.
+
 ## Release Process
 
 Nibble uses a dedicated release workflow in `.github/workflows/release.yml` that:

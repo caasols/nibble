@@ -3,7 +3,8 @@ import Foundation
 enum LocalizationCatalog {
     static func localized(_ key: String, localeIdentifier: String? = nil) -> String {
         if let localeIdentifier,
-           let localeBundle = bundle(for: localeIdentifier) {
+           let localeBundle = bundle(for: localeIdentifier)
+        {
             let value = localeBundle.localizedString(forKey: key, value: nil, table: nil)
             if value != key {
                 return value
@@ -31,7 +32,8 @@ enum LocalizationCatalog {
     private static func bundle(for localeIdentifier: String) -> Bundle? {
         for bundle in candidateBundles() {
             if let path = bundle.path(forResource: localeIdentifier, ofType: "lproj"),
-               let localizedBundle = Bundle(path: path) {
+               let localizedBundle = Bundle(path: path)
+            {
                 return localizedBundle
             }
         }

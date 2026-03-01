@@ -1,10 +1,10 @@
-import SwiftUI
 import AppKit
+import SwiftUI
 
 struct InterfaceDetailView: View {
     let interface: NetworkInterface
     @Environment(\.dismiss) private var dismiss
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack {
@@ -16,9 +16,9 @@ struct InterfaceDetailView: View {
                 }
             }
             .padding()
-            
+
             Divider()
-            
+
             ScrollView {
                 VStack(alignment: .leading, spacing: 12) {
                     DetailRow(label: LocalizationCatalog.localized("interface.details.name"), value: interface.name)
@@ -28,13 +28,13 @@ struct InterfaceDetailView: View {
                     DetailRow(label: LocalizationCatalog.localized("interface.details.media"), value: interface.type)
                     CopyableDetailRow(label: LocalizationCatalog.localized("interface.details.mac"), value: interface.hardwareAddress ?? LocalizationCatalog.localized("common.unavailable"))
                     DetailRow(label: LocalizationCatalog.localized("interface.details.status"), value: interface.isActive ? LocalizationCatalog.localized("status.active") : LocalizationCatalog.localized("status.inactive"))
-                    
+
                     if !interface.addresses.isEmpty {
                         Text(LocalizationCatalog.localized("interface.details.ip_addresses"))
                             .font(.subheadline)
                             .fontWeight(.semibold)
                             .padding(.top, 8)
-                        
+
                         ForEach(interface.addresses, id: \.self) { address in
                             CopyableValueRow(value: address)
                         }
@@ -52,7 +52,7 @@ struct InterfaceDetailView: View {
 struct DetailRow: View {
     let label: String
     let value: String
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 4) {
             Text(label)

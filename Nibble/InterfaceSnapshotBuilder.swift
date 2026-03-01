@@ -67,21 +67,21 @@ enum InterfaceSnapshotBuilder {
     static func typeName(for medium: InterfaceMedium) -> String {
         switch medium {
         case .wired:
-            return LocalizationCatalog.localized("interface.type.ethernet")
+            LocalizationCatalog.localized("interface.type.ethernet")
         case .wiFi:
-            return LocalizationCatalog.localized("interface.type.wifi")
+            LocalizationCatalog.localized("interface.type.wifi")
         case .vpn:
-            return LocalizationCatalog.localized("interface.type.vpn")
+            LocalizationCatalog.localized("interface.type.vpn")
         case .bridge:
-            return LocalizationCatalog.localized("interface.type.bridge")
+            LocalizationCatalog.localized("interface.type.bridge")
         case .loopback:
-            return LocalizationCatalog.localized("interface.type.loopback")
+            LocalizationCatalog.localized("interface.type.loopback")
         case .awdl:
-            return LocalizationCatalog.localized("interface.type.awdl")
+            LocalizationCatalog.localized("interface.type.awdl")
         case .bluetooth:
-            return LocalizationCatalog.localized("interface.type.bluetooth")
+            LocalizationCatalog.localized("interface.type.bluetooth")
         case .unknown:
-            return LocalizationCatalog.localized("common.unknown")
+            LocalizationCatalog.localized("common.unknown")
         }
     }
 
@@ -104,9 +104,9 @@ enum InterfaceSnapshotBuilder {
 
     private static func isVisible(_ interfaceName: String) -> Bool {
         !interfaceName.starts(with: "lo") &&
-        !interfaceName.starts(with: "awdl") &&
-        !interfaceName.starts(with: "llw") &&
-        !interfaceName.starts(with: "utun")
+            !interfaceName.starts(with: "awdl") &&
+            !interfaceName.starts(with: "llw") &&
+            !interfaceName.starts(with: "utun")
     }
 
     private static func annotateRouteRole(
@@ -196,7 +196,7 @@ enum InterfaceSnapshotBuilder {
                 return true
             }
 
-            if incomingRank == currentRank && medium == .unknown && observation.medium != .unknown {
+            if incomingRank == currentRank, medium == .unknown, observation.medium != .unknown {
                 return true
             }
 
@@ -206,9 +206,9 @@ enum InterfaceSnapshotBuilder {
         private func confidenceRank(_ confidence: InterfaceClassificationConfidence) -> Int {
             switch confidence {
             case .high:
-                return 2
+                2
             case .low:
-                return 1
+                1
             }
         }
     }

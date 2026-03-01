@@ -13,7 +13,7 @@ final class UserDefaultsTelemetryQueueStore: TelemetryQueueStoring {
         "app_started": ["app_mode"],
         "open_preferences": ["source"],
         "toggle_telemetry": ["enabled"],
-        "toggle_public_ip": ["enabled"]
+        "toggle_public_ip": ["enabled"],
     ]
 
     init(userDefaults: UserDefaults = .standard, queueKey: String = "telemetryPendingEvents") {
@@ -33,7 +33,7 @@ final class UserDefaultsTelemetryQueueStore: TelemetryQueueStoring {
         var events = queuedEvents()
         var event: [String: String] = [
             "name": eventName,
-            "timestamp": ISO8601DateFormatter().string(from: Date())
+            "timestamp": ISO8601DateFormatter().string(from: Date()),
         ]
 
         if let payload {

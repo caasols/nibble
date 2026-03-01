@@ -14,7 +14,7 @@ struct PreferencesView: View {
             set: { appDelegate.loginItemController.setOpenAtLogin($0) }
         )
     }
-    
+
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
             HStack {
@@ -26,7 +26,7 @@ struct PreferencesView: View {
                     dismiss()
                 }
             }
-            
+
             Divider()
 
             VStack(alignment: .leading, spacing: 8) {
@@ -66,7 +66,7 @@ struct PreferencesView: View {
             }
 
             Divider()
-            
+
             VStack(alignment: .leading, spacing: 16) {
                 VStack(alignment: .leading, spacing: 6) {
                     Toggle(LocalizationCatalog.localized("preferences.show_public_ip"), isOn: $settings.showPublicIP)
@@ -91,19 +91,21 @@ struct PreferencesView: View {
                     }
                     .pickerStyle(.segmented)
 
-                    Text(settings.appMode == .menuBarOnly
-                         ? LocalizationCatalog.localized("preferences.app_mode.help.menubar_only")
-                         : LocalizationCatalog.localized("preferences.app_mode.help.menubar_dock"))
-                        .font(.caption)
-                        .foregroundColor(.secondary)
+                    Text(
+                        settings.appMode == .menuBarOnly
+                            ? LocalizationCatalog.localized("preferences.app_mode.help.menubar_only")
+                            : LocalizationCatalog.localized("preferences.app_mode.help.menubar_dock")
+                    )
+                    .font(.caption)
+                    .foregroundColor(.secondary)
                 }
-                
+
                 VStack(alignment: .leading, spacing: 8) {
                     Text(String(format: LocalizationCatalog.localized("preferences.refresh_interval"), settings.refreshInterval))
                     Slider(value: .init(
                         get: { Double(settings.refreshInterval) },
                         set: { settings.refreshInterval = Int($0) }
-                    ), in: 10...300, step: 10)
+                    ), in: 10 ... 300, step: 10)
                 }
 
                 VStack(alignment: .leading, spacing: 8) {
@@ -149,7 +151,7 @@ struct PreferencesView: View {
                     }
                 }
             }
-            
+
             Spacer()
         }
         .padding()

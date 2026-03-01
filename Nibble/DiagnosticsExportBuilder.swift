@@ -85,11 +85,11 @@ private extension EthernetConnectionState {
     var diagnosticsValue: String {
         switch self {
         case .active:
-            return "active"
+            "active"
         case .inactive:
-            return "inactive"
+            "inactive"
         case .disconnected:
-            return "disconnected"
+            "disconnected"
         }
     }
 }
@@ -98,21 +98,21 @@ private extension InterfaceMedium {
     var diagnosticsValue: String {
         switch self {
         case .wired:
-            return "wired"
+            "wired"
         case .wiFi:
-            return "wifi"
+            "wifi"
         case .vpn:
-            return "vpn"
+            "vpn"
         case .bridge:
-            return "bridge"
+            "bridge"
         case .loopback:
-            return "loopback"
+            "loopback"
         case .awdl:
-            return "awdl"
+            "awdl"
         case .bluetooth:
-            return "bluetooth"
+            "bluetooth"
         case .unknown:
-            return "unknown"
+            "unknown"
         }
     }
 }
@@ -121,9 +121,9 @@ private extension InterfaceRouteRole {
     var diagnosticsValue: String {
         switch self {
         case .none:
-            return "none"
+            "none"
         case .defaultRoute:
-            return "defaultRoute"
+            "defaultRoute"
         }
     }
 }
@@ -132,9 +132,9 @@ private extension InterfaceClassificationConfidence {
     var diagnosticsValue: String {
         switch self {
         case .high:
-            return "high"
+            "high"
         case .low:
-            return "low"
+            "low"
         }
     }
 }

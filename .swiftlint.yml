@@ -1,0 +1,52 @@
+included:
+  - Nibble
+  - Tests
+
+excluded:
+  - .build
+  - DerivedData
+
+disabled_rules:
+  - trailing_whitespace
+  - vertical_whitespace
+  - colon
+  - comma
+  - trailing_comma
+  - todo
+
+opt_in_rules:
+  - force_unwrapping
+  - private_outlet
+  - unused_optional_binding
+  - toggle_bool
+  - first_where
+  - contains_over_filter_is_empty
+  - empty_string
+  - redundant_nil_coalescing
+  - yoda_condition
+  - sorted_first_last
+  - implicitly_unwrapped_optional
+
+force_cast: warning
+force_try: warning
+force_unwrapping: warning
+
+private_outlet: warning
+implicitly_unwrapped_optional: warning
+
+line_length:
+  warning: 140
+  ignores_comments: true
+  ignores_urls: true
+
+type_body_length:
+  warning: 300
+  error: 500
+
+function_body_length:
+  warning: 60
+  error: 100
+
+cyclomatic_complexity:
+  warning: 10
+  error: 20

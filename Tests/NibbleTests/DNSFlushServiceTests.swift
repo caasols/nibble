@@ -11,7 +11,7 @@ struct DNSFlushServiceTests {
         #expect(result.isSuccess == true)
         #expect(runner.executedCommands == [
             ["/usr/bin/dscacheutil", "-flushcache"],
-            ["/usr/bin/killall", "-HUP", "mDNSResponder"]
+            ["/usr/bin/killall", "-HUP", "mDNSResponder"],
         ])
     }
 

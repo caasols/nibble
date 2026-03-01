@@ -39,10 +39,10 @@ struct FeedbackComposerTests {
         #expect(composer.diagnosticsPreview?.contains("AA:BB:CC:DD:EE:FF") == true)
     }
 
-    @Test func submissionPayloadContainsFeedbackAndOptionalDiagnostics() {
-        let composer = FeedbackComposer(
+    @Test func submissionPayloadContainsFeedbackAndOptionalDiagnostics() throws {
+        let composer = try FeedbackComposer(
             diagnosticsProvider: { sampleContext },
-            issueCreationURL: URL(string: "https://example.com/issues/new")!
+            issueCreationURL: #require(URL(string: "https://example.com/issues/new"))
         )
         composer.category = .feature
         composer.subject = "Need shortcut"
@@ -77,7 +77,7 @@ private let sampleContext = FeedbackDiagnosticsContext(
             classificationConfidence: .high,
             routeRole: .defaultRoute,
             adapterDescription: "Dock"
-        )
+        ),
     ],
     publicIP: "203.0.113.10"
 )

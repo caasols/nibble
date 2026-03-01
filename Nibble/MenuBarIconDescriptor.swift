@@ -8,19 +8,19 @@ struct MenuBarIconDescriptor: Equatable {
     static func forConnectionState(_ state: EthernetConnectionState) -> MenuBarIconDescriptor {
         switch state {
         case .active:
-            return MenuBarIconDescriptor(
+            MenuBarIconDescriptor(
                 systemSymbolName: "network",
                 accessibilityDescription: LocalizationCatalog.localized("menubar.icon.active"),
                 fallbackTitle: "N"
             )
         case .inactive:
-            return MenuBarIconDescriptor(
+            MenuBarIconDescriptor(
                 systemSymbolName: "exclamationmark.network",
                 accessibilityDescription: LocalizationCatalog.localized("menubar.icon.inactive"),
                 fallbackTitle: "N"
             )
         case .disconnected:
-            return MenuBarIconDescriptor(
+            MenuBarIconDescriptor(
                 systemSymbolName: "network.slash",
                 accessibilityDescription: LocalizationCatalog.localized("menubar.icon.disconnected"),
                 fallbackTitle: "N"
