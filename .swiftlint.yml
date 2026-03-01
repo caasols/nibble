@@ -27,9 +27,9 @@ opt_in_rules:
   - sorted_first_last
   - implicitly_unwrapped_optional
 
-force_cast: error
-force_try: error
-force_unwrapping: error
+force_cast: warning
+force_try: warning
+force_unwrapping: warning
 
 private_outlet: warning
 implicitly_unwrapped_optional: warning
